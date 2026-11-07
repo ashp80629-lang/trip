@@ -1,0 +1,16 @@
+{
+  "name": "trip",
+  "version": "1.0.0",
+  "description": "Trip details management application",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 3000",
+    "serve": "python3 -m http.server 8000"
+  },
+  "keywords": [
+    "trip",
+    "travel"
+  ],
+  "author": "",
+  "license": "ISC"
+}
