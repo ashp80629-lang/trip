@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="color-scheme" content="light">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trip details</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--bg:#fbfbfd;--soft:#f2f3f7;--wash:radial-gradient(900px 480px at 75% -120px,#ffe3d6 0%,rgba(255,227,214,0) 70%),radial-gradient(700px 400px at 0% 0,#fff1e9 0%,rgba(255,241,233,0) 65%);--card:#fff;--ink:#16161a;--mute:#797980;--line:#e8e9ef;--acc:#ee5a2a;--accf:#fff;--acc2:#fdebe4;--pb:#16161a;--pf:#fff;--ok:#15803d;--ok2:#e5f5ea;--warn:#b45309;--warn2:#fcf1de;--bad:#b91c1c;--bad2:#fde9e7;--sh:0 10px 30px rgba(20,20,30,.07);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--wash) top/100% 560px no-repeat,var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-text-size-adjust:100%}
+a{color:inherit}
+.ic{width:20px;height:20px;flex:none}
+.app{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100vh;min-height:100dvh}
+.side{position:sticky;top:12px;margin:12px 0 12px 12px;height:calc(100vh - 24px);height:calc(100dvh - 24px);background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px 12px 12px;display:flex;flex-direction:column;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;padding:0 6px;font-weight:700;font-size:16px}
+.logo{width:34px;height:34px;border-radius:11px;background:var(--pb);color:var(--pf);display:grid;place-items:center}
+nav{display:flex;flex-direction:column;gap:3px;flex:1;overflow-y:auto}
+nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;text-decoration:none;font-weight:500;color:var(--mute);transition:background .15s,color .15s}
+nav a:hover{background:var(--soft);color:var(--ink)}
+nav a.on{background:var(--pb);color:var(--pf)}
+.callcard{background:var(--soft);border-radius:16px;padding:14px}
+.callcard small{display:block;color:var(--mute);font-size:12.5px}
+.callcard .num{display:block;margin:2px 0 10px;font-size:19px}
+.callcard .btn{width:100%;justify-content:center}
+main{padding:28px 32px 40px;max-width:1240px;width:100%;min-width:0;margin:0 auto;overflow-x:clip}
+.top{display:flex;flex-wrap:wrap;gap:14px 20px;align-items:center;justify-content:space-between;margin-bottom:26px}
+.top h1{margin:0;font-size:28px;font-weight:700;letter-spacing:-.02em}
+.top p{margin:2px 0 0;color:var(--mute);font-size:14px}
+h2{font-size:22px;margin:0 0 4px;font-weight:700;letter-spacing:-.01em}
+h3{margin:0 0 2px;font-size:16px;font-weight:600}
+.sub{color:var(--mute);margin:0 0 20px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:24px}
+.stat,.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 1px 2px rgba(30,30,60,.04),0 6px 18px rgba(30,30,60,.04)}
+.stat b{display:block;font-size:26px;font-weight:700;letter-spacing:-.02em}
+.stat span,.meta{color:var(--mute);font-size:13px}
+.stat:first-child{background:var(--pb);border-color:var(--pb);color:var(--pf)}.stat:first-child span{color:inherit;opacity:.7}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(290px,100%),1fr));gap:14px}.grid.w{grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr))}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:8px 15px;min-height:36px;border-radius:99px;border:1px solid var(--line);background:var(--card);font:500 13px Inter,system-ui,sans-serif;text-decoration:none;cursor:pointer;color:var(--ink);transition:background .15s,opacity .15s}
+.btn:hover{background:var(--soft)}
+.btn.p{background:var(--pb);border-color:var(--pb);color:var(--pf)}.btn.p:hover{opacity:.85;background:var(--pb)}
+.btn.c{background:var(--acc);border-color:var(--acc);color:var(--accf);font-weight:600}.btn.c:hover{opacity:.88;background:var(--acc)}
+.btn:focus-visible,nav a:focus-visible,input:focus-visible,select:focus-visible,.pin:focus-visible,.fab button:focus-visible,.num:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.chip:before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.Y{background:var(--ok2);color:var(--ok)}.N{background:var(--bad2);color:var(--bad)}.P{background:var(--warn2);color:var(--warn)}.C{background:var(--acc2);color:var(--acc)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;margin-top:12px;font-size:14px}
+.kv dt{color:var(--mute)}.kv dd{margin:0;overflow-wrap:anywhere}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+select{appearance:none;-webkit-appearance:none;padding-right:36px!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:16px;cursor:pointer}
+.tools>select{flex:0 1 auto;width:auto;min-width:140px;max-width:200px}
+input[type=search],select{flex:1;min-width:170px;min-height:42px;padding:9px 14px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.chips button{padding:7px 14px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:500 13px Inter,system-ui,sans-serif;cursor:pointer;transition:background .15s}
+.chips button:hover{background:var(--soft)}
+.chips button.on,.btn.on{background:var(--pb);color:var(--pf);border-color:var(--pb)}
+.rc{position:relative}.rc h3{padding-right:46px}.rarrow{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--acc);color:var(--accf);text-decoration:none;transition:opacity .15s,transform .15s}.rarrow:hover{opacity:.88;transform:translate(1px,-1px)}.rarrow .ic{width:20px;height:20px}
+.stops{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin-top:12px}
+.stops span{font-size:12.5px;background:var(--soft);border-radius:12px;padding:5px 6px 5px 11px;min-height:34px;display:flex;align-items:center;justify-content:space-between;gap:8px;line-height:1.25}.sa{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--acc);color:var(--accf);text-decoration:none;flex:none}.sa .ic{width:13px;height:13px}.sa:hover{opacity:.85}.sa.go{width:32px;height:32px}.sa.go .ic{width:16px;height:16px}.ar{display:none}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:14px}
+td,th{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+th{color:var(--mute);font-weight:500;font-size:12.5px}
+.note{background:var(--warn2);color:var(--ink);border-radius:14px;padding:12px 16px;margin-bottom:18px;font-size:14px}
+.pg{display:none}.pg.on{display:block}
+.tl{display:grid;gap:10px}
+.it{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.it.done{opacity:.55}
+input[type=checkbox]{width:20px;height:20px;accent-color:var(--acc);margin-top:2px;flex:none;cursor:pointer}
+.pnr{align-self:flex-start;font:600 15px ui-monospace,Menlo,monospace;background:var(--acc2);color:var(--acc);padding:4px 10px;border-radius:99px}
+.bar{height:8px;border-radius:9px;background:var(--line);overflow:hidden;margin:6px 0 18px}
+.bar i{display:block;height:100%;background:var(--acc);border-radius:9px;width:0;transition:width .3s}
+.mapbox{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:10px}
+.pin{cursor:pointer}
+.hero{position:relative;overflow:hidden;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px;padding:26px 28px;border-radius:24px;color:#fff;margin-bottom:20px;background:linear-gradient(120deg,#ff8a50 0%,#ee4f22 55%,#d9381a 100%);box-shadow:0 14px 34px rgba(238,90,42,.28)}
+.hero>div{position:relative;z-index:1}.hero h2{font-size:30px;margin:2px 0 6px;letter-spacing:-.02em}.hero p{margin:0;opacity:.9}.hk{font-size:13px;font-weight:600;opacity:.85}
+.hn{text-align:right}.hn b{display:block;font-size:56px;line-height:1;font-weight:700;letter-spacing:-.03em}.hn span{font-size:14px;opacity:.9}
+.hm{position:absolute;right:0;bottom:0;width:70%;max-width:560px;height:auto;z-index:0}
+@media (max-width:760px){.hero{padding:20px}.hero h2{font-size:24px}.hn b{font-size:44px}}
+.call{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;margin-bottom:24px}
+.call>div{flex:1 1 170px}
+.num{font:700 22px Inter,system-ui,sans-serif;letter-spacing:.01em;text-decoration:none;color:var(--ink)}
+.foot{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;justify-content:space-between;color:var(--mute);font-size:14px}
+.foot .num{font-size:18px}.foot .r{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
+.fab{position:fixed;right:16px;bottom:calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;z-index:30}
+.fab button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);display:grid;place-items:center;cursor:pointer;box-shadow:var(--sh);transition:transform .15s,background .15s,color .15s,opacity .2s,visibility .2s}
+.fab button:hover{background:var(--pb);color:var(--pf);transform:translateY(-2px)}
+.fab button.off{opacity:0;visibility:hidden;pointer-events:none}
+.vov{position:fixed;inset:0;z-index:80;background:var(--bg);display:flex;flex-direction:column}.vbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;padding-top:max(8px,env(safe-area-inset-top));border-bottom:1px solid var(--line)}.vt{font-size:13px;color:var(--mute);min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.vact{display:flex;gap:8px;flex-wrap:wrap}.vov iframe{flex:1;width:100%;border:0;background:#fff}
+.bov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:70;padding:20px}.bbox{background:var(--card);color:var(--ink);border-radius:18px;padding:18px;width:min(420px,100%);max-height:90vh;overflow:auto}.bbox h3{margin-bottom:6px}.blist{display:flex;flex-direction:column;gap:8px;margin-top:14px}.blist .btn{width:100%;justify-content:center}
+.att{display:flex;flex-direction:column;gap:8px;align-items:flex-start;margin:8px 0}.att .gpsl{display:flex;gap:8px;align-items:flex-start;font-size:13px}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-size:14px;z-index:50;max-width:90vw}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:60;padding:20px}
+.ov div{background:var(--card);border-radius:18px;padding:14px;max-width:420px;max-height:90vh;overflow:auto}
+.ov img{width:100%;display:block;border-radius:10px}
+@media (max-width:1100px){.app{grid-template-columns:212px minmax(0,1fr)}main{padding:24px 22px 40px}.grid{grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr))}}
+@media (pointer:coarse){.btn,.chips button{min-height:44px}}
+@media (max-width:760px){
+.app{display:block}
+.side{display:contents}.brand,.callcard{display:none}
+nav{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));flex-direction:row;gap:2px;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--sh);z-index:20;overflow-x:auto;overflow-y:hidden;flex:none}
+nav a{flex:none;flex-direction:column;gap:2px;min-width:64px;min-height:50px;justify-content:center;padding:6px 10px;font-size:11px;white-space:nowrap}
+main{padding:18px 14px 120px}
+.top h1{font-size:24px}
+.top>.row{flex-wrap:nowrap;overflow-x:auto;width:100%;padding-bottom:4px}.top>.row .btn{flex:none;white-space:nowrap}
+.stats{grid-template-columns:1fr 1fr}.stat b{font-size:22px}
+.grid{grid-template-columns:1fr}
+.fab{display:none}
+.foot{flex-direction:column;align-items:flex-start}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+@media print{.side,.noprint,.toast,.ov,.bov,.vov,.fab,.foot{display:none!important}.app{display:block}main{padding:0;max-width:none}.pg{display:none}.pg.on{display:block}body.all .pg{display:block;break-after:page}.card,.it{break-inside:avoid}}
+
+/* ---- agent + responsive additions ---- */
+html{-webkit-tap-highlight-color:transparent}
+img,svg{max-width:100%}
+.meta,h3,.sub{overflow-wrap:anywhere}
+.it>div{min-width:0}
+.btn.wa{background:#0f8a4f;border-color:#0f8a4f;color:#fff;font-weight:600}.btn.wa:hover{background:#0c7442;opacity:1}
+.av{width:52px;height:52px;border-radius:16px;background:var(--pb);color:var(--pf);display:grid;place-items:center;font-weight:700;font-size:18px;flex:none}
+.agh{display:flex;align-items:center;gap:14px;margin-bottom:4px}
+.acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:14px}
+.acts .btn{width:100%}
+.callcard b{display:block;font-size:15px}
+.callcard .stk{display:grid;gap:8px;margin-top:10px}.callcard .stk .btn{width:100%}
+.mini{display:block;color:var(--mute);font-size:12.5px}
+.foot b{color:var(--ink)}.foot a:not(.btn){color:var(--ink);text-underline-offset:3px}
+.foot .r .btn{min-height:40px}
+.msg{white-space:pre-line}
+.sec{margin:26px 0 10px}
+#tracker td:nth-child(2),#mpanel td:nth-child(2){white-space:normal;min-width:130px}
+@media (min-width:1500px){.app{grid-template-columns:268px minmax(0,1fr)}main{max-width:1360px;padding:32px 40px 48px}}
+@media (max-width:1100px) and (min-width:761px){.top h1{font-size:25px}.hero h2{font-size:26px}}
+@media (max-width:760px){
+.tools>.btn{align-self:flex-end}.tw td:last-child{padding-right:12px}.ca{display:none}.ar{display:block;font-size:12px;color:var(--mute)}.tw td,.tw th{padding:9px 6px}.tw .chip{white-space:nowrap}
+.mapbox{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.chips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;margin-right:-14px;padding-right:14px}.chips button{flex:none;white-space:nowrap}
+td,th{padding:9px 8px}
+.tools input[type=search]{min-width:0;flex:1 1 100%}.tools>.dd,.dtop .dd{flex:1 1 130px;max-width:48%}.dd select{min-width:0;max-width:none}
+.toast{bottom:104px}
+.card,.stat{padding:15px}
+.acts>.btn:last-child:nth-child(odd){grid-column:1/-1}
+.foot .r{width:100%}
+.foot .r .btn{flex:1 1 0}
+.hero{align-items:flex-start}.hn{text-align:left}
+}
+@media (max-width:380px){
+.chips{margin-right:-12px;padding-right:12px}
+main{padding:14px 12px 120px}
+.stats{grid-template-columns:1fr 1fr;gap:8px}.stat b{font-size:20px}
+.top h1{font-size:22px}.hero h2{font-size:21px}.hn b{font-size:38px}
+.kv{grid-template-columns:1fr;gap:0}.kv dt{margin-top:8px;font-size:12.5px}
+nav a{min-width:58px;padding:6px 8px}
+.av{width:44px;height:44px;font-size:16px}
+}
+@media (max-height:860px) and (min-width:761px){.side{padding:14px 10px 10px;gap:10px}nav a{padding:7px 12px}.callcard{padding:10px 12px}.callcard .mini{display:none}.callcard .stk{margin-top:6px;gap:6px}.callcard .btn{min-height:32px;padding:5px 12px}}
+@media (max-height:700px) and (min-width:761px){.callcard small{display:none}}
+@media (max-height:520px) and (min-width:761px){.side{position:static;height:auto}.callcard{display:none}}
+
+/* ---- contacts + camera ---- */
+#sidecall{display:grid;gap:8px}
+.callcard .stk.two{grid-template-columns:1fr 1fr}.callcard .stk.two .btn{padding:8px 6px}
+.card.me{border-color:var(--acc);background:linear-gradient(180deg,var(--acc2),var(--card) 70%)}
+@media (min-width:1000px){.tl{grid-template-columns:1fr 1fr}}
+@media (max-width:760px){.foot .r .btn{flex:1 1 44%}}
+.cam{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start;margin-bottom:20px}
+@media (max-width:760px){.cam{grid-template-columns:1fr}}
+.vw{position:relative;aspect-ratio:3/4;max-height:72vh;width:100%;background:#0b0b0e;border-radius:22px;overflow:hidden}
+.vw video,.rvw>*{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
+.cmsg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#fff;padding:24px;font-size:14px}
+.rt{position:absolute;top:12px;left:12px;z-index:2;background:#e11d48;color:#fff;border-radius:99px;padding:3px 11px;font:600 13px ui-monospace,Menlo,monospace}
+.rvw{position:absolute;inset:0;z-index:1}
+.ctl{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 0 4px}
+.ctl .btn{min-width:104px}
+.shut{width:72px;height:72px;border-radius:50%;border:4px solid var(--ink);background:var(--acc);box-shadow:inset 0 0 0 4px var(--card);cursor:pointer;transition:border-radius .15s,background .15s}
+.shut.rec{background:#e11d48;border-radius:20px}.shut:disabled{opacity:.35;cursor:default}
+.shut:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+.fl{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fl .full{grid-column:1/-1}
+.fl label{display:block;font-size:12.5px;color:var(--mute);margin-bottom:3px}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 12px center!important;background-size:16px!important;appearance:none;-webkit-appearance:none;padding-right:36px!important}
+.dd{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--mute);flex:0 1 auto;min-width:0}.dd select{width:100%;min-width:140px;max-width:220px;flex:none}
+img,svg,video,iframe{max-width:100%}.card,.dcard,.stat{min-width:0}.card h3,.dh h3{overflow-wrap:anywhere}.kv dd{min-width:0;overflow-wrap:anywhere}.row{min-width:0}
+.fl input,.fl select{width:100%;min-width:0;max-width:none;flex:none}
+.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.gi{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.th{display:block;position:relative;width:100%;aspect-ratio:1;padding:0;border:0;background:#000;cursor:pointer}
+.th img,.th video{width:100%;height:100%;object-fit:cover;display:block}
+.vb{position:absolute;left:8px;bottom:8px;font:600 11px Inter,sans-serif;background:rgba(0,0,0,.65);color:#fff;border-radius:99px;padding:2px 8px;font-style:normal}
+.gm{padding:10px 12px 12px;font-size:12.5px}.gm .row{margin-top:8px}.gm .btn{padding:6px 12px;min-height:34px}
+.ov.lb div{max-width:min(94vw,860px)}.ov.lb .row{padding:0;background:none}.ov video{width:100%;display:block;border-radius:10px}
+.dmiss .btn{opacity:.4;pointer-events:none}.dmiss .meta{color:var(--bad)}
+.fl input[type=url],.fl input[type=text],.fl input[type=password]{min-height:42px;padding:9px 14px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
+
+/* ---- v3 polish ---- */
+[hidden]{display:none!important}
+.ib{display:inline-grid;place-items:center;width:32px;height:32px;padding:0;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;text-decoration:none;flex:none;transition:background .15s}
+.ib:hover{background:var(--soft)}.ib .ic{width:16px;height:16px}
+.ib:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.btn .ic{width:16px;height:16px}
+.pn{display:flex;align-items:center;gap:8px}.pn b{font:600 15px ui-monospace,Menlo,monospace;letter-spacing:.02em}
+.card.me{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 16px;padding:14px 16px}
+.card.me .agh{margin:0}
+.card.me .acts{display:flex;flex-wrap:wrap;gap:8px;margin:0}
+.card.me .acts .btn{flex:none;width:auto;min-width:118px}
+.grid.ct{align-items:start}
+.dtop{display:flex;flex-wrap:wrap;gap:12px 20px;justify-content:space-between;align-items:flex-end;margin-bottom:4px}
+.grid.dg{grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr))}
+.dtop{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:12px}.dtop .row{justify-content:flex-start}
+.dh h3{margin-bottom:0}.dcard{display:flex;flex-direction:column;gap:14px;padding:16px}
+.dh{display:flex;gap:12px;align-items:flex-start}.dh h3{font-size:15px;line-height:1.3;margin:0 0 2px}
+.di{width:40px;height:40px;border-radius:12px;background:var(--acc2);color:var(--acc);display:grid;place-items:center;flex:none}
+.ib2{display:inline-grid;place-items:center;width:32px;height:32px;min-width:32px;min-height:32px;padding:0;border-radius:50%}.ib2 .ic{width:16px;height:16px}
+.da{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;align-items:center}.ibs{display:contents}
+.sh{display:flex;flex-wrap:wrap;gap:16px 24px;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+.sh{display:block}.idrow{display:flex;align-items:center;gap:10px;margin-top:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}.idrow>b{font-size:13px;flex:none}.idrow .idg{display:flex;gap:8px;margin:0;flex:none}.idrow .idg>span{flex:none}.idrow .idg .btn{width:auto;min-height:34px;padding:6px 12px}
+.idbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;width:min(100%,330px)}
+.idbox b{font-size:13.5px}.idg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.idg>span{display:block}.idg .btn{width:100%;justify-content:flex-start;padding:7px 10px;font-size:12.5px;white-space:nowrap}
+.help{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)}
+.help summary{cursor:pointer;font-weight:600;font-size:14px;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:32px}.help summary::-webkit-details-marker{display:none}.help summary::after{content:"";width:16px;height:16px;flex:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") center/16px no-repeat;transition:transform .15s}.help[open] summary::after{transform:rotate(180deg)}.help[open] summary{margin-bottom:8px}
+.help select,.help input[type=text]{display:block;width:100%;min-width:0;flex:none;min-height:40px;padding:8px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:14px}
+.help input[type=text]{margin-top:8px}
+.help .row .btn{flex:1 1 auto}.kv{align-items:center}
+.pv{background:var(--soft);border-radius:12px;padding:10px 12px;font-size:12.5px;color:var(--mute);white-space:pre-line;margin:10px 0 0;overflow-wrap:anywhere}
+.dis{opacity:.4;pointer-events:none}
+.mk{width:28px;height:28px;border-radius:50%;background:var(--acc);color:#fff;font:700 12px Inter,sans-serif;display:grid;place-items:center;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+.mk.ok{background:var(--ok)}.mk.on{background:var(--ink);box-shadow:0 0 0 4px rgba(238,90,42,.35),0 2px 8px rgba(0,0,0,.35)}
+.cam2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start;margin-bottom:22px}
+@media (max-width:900px){.cam2{grid-template-columns:1fr}}
+.capbtns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.capbtn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 12px;border-radius:18px;border:0;background:var(--acc);color:#fff;font:600 15px Inter,system-ui,sans-serif;cursor:pointer;transition:opacity .15s}
+.capbtn.v{background:var(--pb)}.capbtn:hover{opacity:.88}.capbtn .ic{width:30px;height:30px}
+.rvw2{border-radius:16px;overflow:hidden;background:#000;margin-top:14px}.rvw2 img,.rvw2 video{display:block;width:100%;max-height:60vh;object-fit:contain}
+.fl input[type=checkbox]{width:20px;height:20px;min-height:0;padding:0;flex:none}
+.fl label.gpsl{display:flex;gap:10px;align-items:flex-start;color:var(--ink);font-size:13px;margin:0}
+
+#gwrap iframe{display:block;width:100%;height:min(66vh,580px);min-height:380px;border:0;border-radius:14px;background:var(--soft)}
+.chat{display:flex;flex-direction:column;gap:12px;padding:16px}
+#bmsgs{height:min(56vh,520px);overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 2px}
+.bb{max-width:88%;padding:10px 14px;border-radius:16px;font-size:14.5px;line-height:1.5;overflow-wrap:anywhere}
+.bb.u{align-self:flex-end;background:var(--pb);color:var(--pf);border-bottom-right-radius:6px}
+.bb.b{align-self:flex-start;background:var(--soft);border-bottom-left-radius:6px}
+.bb.e{background:var(--warn2)}
+.bb .row{margin-top:8px}
+.cin{display:flex;gap:8px}.cin input{flex:1;min-width:0;min-height:44px;padding:9px 16px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit}
+details.card summary{cursor:pointer;font-weight:600}
+
+/* ---- v4: side-by-side map, compact reset, full-width content ---- */
+main{max-width:none;margin:0}
+@media (min-width:1500px){main{max-width:none}}
+.mapgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+.mapcol{order:-1;min-width:0}
+@media (min-width:900px){
+.mapgrid{grid-template-columns:minmax(320px,5fr) minmax(0,7fr)}
+.mapcol{order:0;position:sticky;top:12px}
+#mpanel{max-height:calc(100vh - 190px);max-height:calc(100dvh - 190px);overflow:auto}
+#gwrap iframe{height:calc(100vh - 190px);height:calc(100dvh - 190px);min-height:420px}
+}
+.tools>.btn.sm{min-height:32px;padding:4px 14px;font-size:12.5px;align-self:flex-end;margin-bottom:5px;flex:none}
+#tracker .tools{align-items:flex-end}
+
+/* ---- v5: icon actions, one-row layouts, sidebar agent ---- */
+.ia{width:38px;height:38px;min-width:38px;min-height:38px;padding:0;border-radius:50%;flex:none;display:inline-grid;place-items:center}
+.ia .ic{width:18px;height:18px}
+.irow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px}
+.trow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px}.trow .btn{flex:none}
+.trow .btn.sm{min-height:36px;padding:6px 13px}
+.callcard .ch{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.callcard .ch b{margin:0}
+.callcard .ch .irow{margin:0;flex-wrap:nowrap;gap:6px}
+.callcard .ia{width:32px;height:32px;min-width:32px;min-height:32px}.callcard .ia .ic{width:16px;height:16px}
+.callcard .ag2h{display:flex;align-items:center;gap:10px}.callcard .ag2h .av{width:38px;height:38px;border-radius:12px;font-size:14px}
+.callcard .ag2h div{min-width:0}
+.callcard .ag2l{display:grid;gap:2px;margin:10px 0 0;font-size:12.5px;color:var(--mute)}
+.callcard .ag2l a{color:var(--ink);text-decoration:none;overflow-wrap:anywhere}.callcard .ag2l a:hover{text-decoration:underline}
+.callcard .ag2f{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}
+.callcard .ag2f .irow{margin:0;flex-wrap:nowrap;gap:6px}
+.callcard .full{font-size:12.5px;font-weight:600;color:var(--acc);text-decoration:none;white-space:nowrap}.callcard .full:hover{text-decoration:underline}
+.foot .r{gap:8px}.foot .r .ia{width:38px;height:38px}
+.card .irow:first-of-type{margin-top:12px}
+main{padding-bottom:28px}.foot{margin-top:24px;padding-top:16px}
+.sec{margin:20px 0 8px}
+@media (max-width:760px){main{padding-bottom:104px}.foot .r .btn{flex:none}.foot .r{width:auto}.trow{gap:6px}.trow .btn.sm{padding:6px 11px}}
+
+/* ---- v6: one icon size, help bot popup ---- */
+:root{--ibs:34px;--ibi:17px}
+.btn.ia,.btn.ib2,.ib,.ib2,.sa,.sa.go,.rarrow,.callcard .btn.ia{width:var(--ibs);height:var(--ibs);min-width:var(--ibs);min-height:var(--ibs);padding:0;border-radius:50%}
+.btn.ia .ic,.btn.ib2 .ic,.ib .ic,.ib2 .ic,.sa .ic,.sa.go .ic,.rarrow .ic,.callcard .btn.ia .ic,.foot .btn.ia .ic{width:var(--ibi);height:var(--ibi)}
+.foot .r .btn.ia{width:var(--ibs);height:var(--ibs);min-height:var(--ibs);align-self:center}
+.rarrow{top:12px;right:12px}.rc h3{padding-right:44px}
+.stops span{padding:3px 4px 3px 11px}
+#cbw{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:45}
+.cbb{width:52px;height:52px;border-radius:50%;border:0;background:var(--acc);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 26px rgba(238,90,42,.4);transition:transform .15s,background .15s}
+.cbb:hover{transform:translateY(-2px)}.cbb.on{background:var(--pb)}.cbb .ic{width:24px;height:24px}
+.cbb:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+.cbp{position:absolute;right:0;bottom:64px;width:min(380px,calc(100vw - 32px));height:min(560px,calc(100dvh - 120px));background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:0 18px 50px rgba(20,20,30,.22);display:flex;flex-direction:column;gap:10px;padding:14px;overflow:hidden}
+.cbp[hidden]{display:none}
+.cbh{display:flex;align-items:center;justify-content:space-between;gap:10px}.cbh b{font-size:16px}.cbh .meta{font-size:12px}
+.cbp #bmsgs{height:auto;flex:1;min-height:0}
+.cbp .chips{flex-wrap:nowrap;overflow-x:auto;margin:0;padding-bottom:4px;flex:none}.cbp .chips button{flex:none;white-space:nowrap;padding:6px 12px}
+.cbp .cin{flex:none}.cbp .cin input{min-height:var(--ibs);height:38px}
+.cbn{font-size:11.5px;flex:none}
+@media (max-width:760px){#cbw{right:12px;bottom:calc(86px + env(safe-area-inset-bottom,0px))}.cbp{bottom:62px;height:min(520px,calc(100dvh - 190px))}}
+
+/* ---- v7: aligned stay cards, routes row, scroll buttons, decoration ---- */
+@supports (grid-template-rows:subgrid){
+.grid.sg{row-gap:14px}
+.grid.sg>.card{display:grid;grid-template-rows:subgrid;grid-row:span 4;row-gap:0;align-content:start}
+}
+.sg .kv{grid-template-columns:104px minmax(0,1fr);align-items:start}
+.sg .kv dt,.sg .kv dd{line-height:1.4}
+.rrow{flex-wrap:nowrap;gap:8px}.rrow .btn{flex:1 1 0;min-width:0;white-space:nowrap;padding:8px 10px;font-size:12.5px}.rrow .btn .ic{flex:none}
+.fab{top:50%;bottom:auto;right:4px;transform:translateY(-50%);gap:8px;display:flex}
+.fab button{width:var(--ibs);height:var(--ibs)}.fab button .ic{width:var(--ibi);height:var(--ibi)}
+@media (min-width:761px){main{padding-right:44px}}
+@media (max-width:760px){.fab{display:flex;right:4px;opacity:.9}}
+@media print{.fab,#cbw{display:none!important}}
+.top{position:relative;isolation:isolate}
+.top::after{content:"";position:absolute;right:-8px;bottom:-14px;width:min(380px,62%);height:96px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 420 110'%3E%3Cpath d='M0 110L90 30l50 50 70-70 90 100 40-40 80 70z' fill='%23ffd9c7'/%3E%3Cpath d='M60 110l80-50 60 40 80-60 100 80 40-20v20z' fill='%23ffe9df'/%3E%3Ccircle cx='330' cy='28' r='18' fill='%23ffe3d4'/%3E%3C/svg%3E") right bottom/contain no-repeat;pointer-events:none;z-index:-1}
+.stat:first-child{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Cpath d='M0 100L60 30l30 35 40-55 70 90z' fill='%23fff' fill-opacity='.10'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right bottom;background-size:75% auto}
+.hero{background-size:140% 140%}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side"><div class="brand"><span class="logo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20l6-12 4 7 3-5 5 10z"/></svg></span>Trip details</div>
+<nav aria-label="Pages"><a href="#home"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Overview</a><a href="#train"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M8 21l2-4M16 21l-2-4"/></svg>Trains</a><a href="#stays"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/></svg>Stays</a><a href="#routes"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h7a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h7"/></svg>Routes</a><a href="#map"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14"/></svg>Map</a><a href="#places"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Places</a><a href="#tracker"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5L20 6"/></svg>Tracker</a><a href="#docs"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg>Documents</a><a href="#camera"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Camera</a><a href="#agent"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Agent</a></nav>
+<div id="sidecall"></div></aside>
+<main>
+<div class="top"><div><h1>Trip details</h1><p>5 – 22 Dec 2026 · Ashish &amp; Priyanka</p></div>
+</div>
+<section class="pg" id="home"></section>
+<section class="pg" id="train"></section>
+<section class="pg" id="stays"></section>
+<section class="pg" id="routes"></section>
+<section class="pg" id="map"></section>
+<section class="pg" id="places"></section>
+<section class="pg" id="tracker"></section>
+<section class="pg" id="docs"></section>
+<section class="pg" id="admin"></section>
+<section class="pg" id="camera"></section>
+<section class="pg" id="agent"></section>
+<footer class="foot" id="foot"></footer>
+<div class="fab noprint" id="fab"><button type="button" id="fup" class="off" aria-label="Scroll to top" title="Scroll to top"></button><button type="button" id="fdn" aria-label="Scroll to bottom" title="Scroll to bottom"></button></div>
+</main>
+</div>
+<script>
+const G="https://www.google.com/maps/";
+const q=s=>encodeURIComponent(s);
+const pin=s=>G+"search/?api=1&query="+q(s);
+const nav=s=>G+"dir/?api=1&travelmode=driving&destination="+q(s);
+const inr=n=>n==null?"Not provided":"₹"+n.toLocaleString("en-IN");
+
+// [name, area, category, sqft, view, in, out, nights, perNight, stayTotal, MAP, mmtCity, mmtId, homestay, checkinISO]
+const H=[
+["DLS Whispering Winds","Kasauli","Deluxe",182,"Jungle view","5 Dec","6 Dec",1,7313,7313,10072,"CTXKS","201410271635192012",0,"12052026","12062026"],
+["Hotel Prestige","Shimla","Deluxe",169,"Not specified","6 Dec","8 Dec",2,3948,7896,7570,"CTSLV","20111217124153535",0,"12062026","12082026"],
+["Hotel Snowflakes","Narkanda","Standard",165,"Mountain view, balcony","8 Dec","9 Dec",1,2790,2790,3167,"CTXRK","201610031314139689",0,"12082026","12092026"],
+["Hotel Moksha – By the River","Jibhi","Garden Cottage",0,"Garden view","9 Dec","10 Dec",1,4955,4955,4008,"CTJIBH","202102211152581323",1,"12092026","12102026"],
+["The RiverSide of Tirthan","Tirthan","Garden View Room",220,"Garden view","10 Dec","11 Dec",1,null,null,4953,"CTGUSHA","202205301318206259",1,"12102026","12112026"],
+["Hotel Kasol Inn","Kasol","Semi Deluxe",120,"King bed; view not specified","11 Dec","12 Dec",1,5309,5309,4533,"CTKSL","201610071955397989",0,"12112026","12122026"],
+["Hotel Mountain Top","Manali","Super Deluxe",156,"Forest/jungle view","12 Dec","15 Dec",3,2302,6906,11241,"CTKUU","20080915125806800",0,"12122026","12152026"],
+["Draft Hotel","Bir Billing","Homestay / private room",0,"Mountain view","15 Dec","17 Dec",2,6568,13136,8739,"CTXVB","202607061602436289",1,"12152026","12172026"],
+["Bagora Heights","Palampur","Executive",204,"Mountain view, private balcony","17 Dec","18 Dec",1,3064,3064,3365,"CTXPL","201603231143561630",0,"12172026","12182026"],
+["Rajesh Dhiman House Homestay","Dharamshala","One room",180,"Not specified","18 Dec","20 Dec",2,null,null,2000,"","",0,"",""],
+["Hotel Moon Leg","Dalhousie","Deluxe",320,"Valley view","20 Dec","21 Dec",1,null,null,4841,"CTXDA","202207220804171173",0,"12202026","12212026"],
+["Hotel Regal","Amritsar","Classic AC",121,"City view","21 Dec","22 Dec",1,2532,2532,2977,"CTATQ","201811271041374022",0,"12212026","12222026"]
+];
+const mmt=h=>h[11]?"https://www.makemytrip.com/hotels/hotel-review?_uCurrency=INR&checkin="+h[14]+"&checkout="+h[15]+"&city="+h[11]+"&country=IN&hotelId="+h[12]+"&locusId="+h[11]+"&locusType=city&payMode=PAS&reference=hotel&roomStayQualifier=2e0e&rsc=1e2e0e&type=hotel"+(h[13]?"&funnelName=homestay&homestay=true":""):"";
+
+// Routes: "Name@qualifier"
+const R=[
+["Chandigarh → Shimla","Chandigarh Railway Station@Chandigarh,Kasauli,Sunset Point@Kasauli,Kasauli Market@Kasauli,Monkey Point@Kasauli,Christ Church@Kasauli,Gilbert Trail@Kasauli,Shimla,Mall Road@Shimla,The Ridge@Shimla"],
+["Shimla → Narkanda","The Ridge@Shimla,Christ Church@Shimla,Scandal Point@Shimla,Kali Bari Temple@Shimla,Jakhoo Temple@Shimla,Jakhoo Ropeway@Shimla,Wooden Market@Shimla,Lakkar Bazaar@Shimla,Kufri,Narkanda@Himachal Pradesh"],
+["Narkanda → Tirthan","Narkanda,Hatu Peak@Narkanda,Hatu Temple@Narkanda,Jibhi,Jibhi Waterfall,Chehni Kothi,Raghupur Fort,Jalori Pass,Tirthan Valley,Tirthan River@Himachal Pradesh"],
+["Tirthan → Kasol","Tirthan River@Himachal Pradesh,Gushaini,Serolsar Lake,Kulhi Katandi,Kasol,Kasol Market@Kasol,Parvati River@Kasol,Manikaran Sahib,Manikaran Hot Springs,Parvati Valley"],
+["Kasol → Manali","Parvati Valley,Manali,Hadimba Temple@Manali,Manu Temple@Manali,Vashisht Temple@Manali,Vashisht Hot Springs@Manali,Tibetan Monastery@Manali,Van Vihar@Manali,Club House@Manali,Manali Mall Road"],
+["Manali → Barot","Manali Mall Road,Old Manali,Solang Valley,Solang Ropeway,Solang Valley Snow,Atal Tunnel,Sissu,Sissu Waterfall,Barot Valley,Uhl River@Barot"],
+["Barot → Palampur","Uhl River@Barot,Barot Village,Barot Riverside,Bir,Bir Tibetan Colony,Tibetan Monastery@Bir,Bir Landing Site,Billing,Bir Billing Paragliding,Palampur"],
+["Palampur → Dharamshala","Palampur,Palampur Tea Gardens,Dharamshala,McLeodganj,Dalai Lama Temple@McLeodganj,Namgyal Monastery@McLeodganj,Bhagsunag Temple@McLeodganj,Bhagsu Waterfall@McLeodganj,St John in the Wilderness@McLeodganj,HPCA Stadium@Dharamshala"],
+["Dharamshala → Khajjiar","HPCA Stadium@Dharamshala,Tibetan Market@McLeodganj,Dalhousie,Gandhi Chowk@Dalhousie,Subhash Chowk@Dalhousie,Dalhousie Market@Dalhousie,Old Dalhousie,Khajjiar,Khajjiar Lake,Khajji Nag Temple@Khajjiar"],
+["Khajjiar → Amritsar","Khajji Nag Temple@Khajjiar,Khajjiar Meadow,Kalatop,Kalatop Khajjiar Sanctuary,Lakkad Mandi,Amritsar@Punjab,Golden Temple@Amritsar,Jallianwala Bagh@Amritsar,Attari Wagah Border@Punjab,Heritage Street@Amritsar"],
+["Amritsar local","Heritage Street@Amritsar,Old City Market@Amritsar"]
+].map(r=>({t:r[0],s:r[1].split(",").map(x=>{const[a,b]=x.split("@");return{n:a,q:a+", "+(b?b+", ":"")+"India"}})}));
+const routeUrl=s=>{const m=s.slice(1,-1).map(x=>x.q).join("|");return G+"dir/?api=1&travelmode=driving&origin="+q(s[0].q)+"&destination="+q(s[s.length-1].q)+(m?"&waypoints="+q(m):"")};
+
+// Places: area, hotel, rows "name|what to do|inc|km|car min|walk min"  (inc: Y yes, N not in package, P partial, C conditional; - = n/a)
+const A=[
+["Kasauli","Rudra Resort Kasauli","Kasauli|Reach and explore town|Y|5|15|30;Sunset Point|Sunset and valley views|Y|2|7|25;Kasauli Market|Walk and shop|Y|4|12|55;Monkey Point|Viewpoint, subject to access|Y|2.3|10|30;Christ Church Kasauli|Colonial church|Y|4.9|15|65;Gilbert Trail Kasauli|Nature walk if weather permits|N|5|15|60"],
+["Shimla","Wood Inn","Shimla Town|Explore and overnight|Y|4|15|-;The Mall Shimla|Walk and explore|Y|3.4|15|50;The Ridge Shimla|Views and walk|Y|3.4|15|50;Christ Church Shimla|Visit|Y|3.4|15|50;Scandal Point Shimla|Viewpoint|Y|3.3|15|50;Kali Bari Temple Shimla|Temple visit|Y|3.5|15|45;Jakhoo Temple Shimla|Temple visit|Y|3.1|15|50;Jakhoo Ropeway Shimla|Ropeway; check ticket inclusion|Y|3.1|15|40;Wooden Market Shimla|Shopping|Y|3.4|15|50;Lakkar Bazaar Shimla|Shopping if time|N|3.1|15|45;Kufri|Mountain outing|Y|18|60|30"],
+["Narkanda","No Darshan hotel","Narkanda|Town and mountain scenery|N|-|-|-;Hatu Peak Narkanda|Viewpoint|N|-|-|-;Hatu Temple Narkanda|Temple and viewpoint|N|-|-|-"],
+["Jibhi","Jibhi Tree Hub","Jibhi|Explore village|Y|1|5|15;Jibhi Waterfall|Short walk, weather permitting|N|16|10|20;Chehni Kothi|Historic tower|Y|35|40|60;Raghupur Fort Jalori Pass|Trek only if safe, daylight allows|Y|20|60|120;Jalori Pass|Scenic drive|Y|53|55|20"],
+["Tirthan","Wood Rose Echostay","Tirthan Valley|Valley sightseeing, relaxed time|Y|5|15|30;Tirthan River|Riverside walk|N|3|10|30;Gushaini|Village visit|N|10|25|30;Serolsar Lake|Forest trek only if safe|N|30|60|120;Kulhi Katandi|Village and scenery|Y|20|45|30"],
+["Kasol","Himtrek Stays","Kasol|Explore village and valley|Y|2|10|25;Kasol Market|Walk and shop|P|2.5|10|30;Parvati River Kasol|Riverside walk|N|2|10|25;Manikaran Sahib|Gurudwara and hot-spring area|Y|6.5|25|-;Manikaran Hot Springs|Confirm bathing arrangements|P|6.5|25|30;Parvati Valley|Scenery and photos|P|2|10|30"],
+["Manali","Urban Retreat","Manali|Explore and relax|Y|3|10|-;Hadimba Temple Manali|Temple visit|Y|1.2|5|15;Manu Temple Manali|Temple if time|N|3.2|15|45;Vashisht Temple Manali|Temple visit|Y|3.5|15|45;Vashisht Hot Springs Manali|Hot-spring area|Y|3.5|15|45;Tibetan Monastery Manali|Visit|Y|1.6|10|25;Van Vihar Manali|Walk|Y|2|10|25;Club House Manali|Activities may cost extra|Y|2|10|30;Manali Mall Road|Walk and shopping|N|1.4|10|20;Old Manali|Cafés and village walk|N|1.5|10|20;Solang Valley|Valley/snow outing|Y|15|50|-;Solang Ropeway|Viewpoint/ropeway|Y|15|50|20;Solang Valley Snow|Snow play if safe access|C|15|50|30;Atal Tunnel|Drive through if open|Y|35|75|-;Sissu|Explore and views|Y|40|90|30;Sissu Waterfall|Scenic stop if accessible|P|40|90|30"],
+["Barot","No Darshan hotel","Barot Valley|Explore valley and overnight|N|-|-|-;Uhl River Barot|Riverside stop|N|-|-|-;Barot Village|Village walk|N|-|-|-;Barot Riverside|Relax and scenery|N|-|-|-"],
+["Bir Billing","No Darshan hotel","Bir|Explore village|N|-|-|-;Bir Tibetan Colony|Explore and eat|N|-|-|30;Tibetan Monastery Bir|Visit|N|-|-|30;Bir Landing Site|Viewpoint and activity area|N|-|-|30;Billing|Viewpoint|N|-|-|20;Bir Billing Paragliding|Optional|N|-|-|-"],
+["Palampur","No Palampur hotel","Palampur|Town and tea-country scenery|Y|-|-|-;Palampur Tea Gardens|Scenic stop|Y|-|-|30"],
+["Dharamshala","Hotel Snow Retreat","Dharamshala|Explore and overnight|Y|3|15|-;McLeodganj|Cafés and shops|Y|2.5|15|40;Dalai Lama Temple McLeodganj|Check opening/access|Y|2.5|15|40;Namgyal Monastery McLeodganj|Visit|Y|2.5|15|40;Bhagsunag Temple|Temple visit|Y|3.5|15|55;Bhagsu Waterfall|Walk if trail/weather allows|Y|4|20|45;St John in the Wilderness McLeodganj|Church visit|Y|1.3|10|20;HPCA Stadium Dharamshala|Visit if open|Y|8|35|-;Tibetan Market McLeodganj|Shopping|N|3|15|45"],
+["Dalhousie","Hotel Mega View","Dalhousie|Explore and overnight|Y|4|15|-;Gandhi Chowk Dalhousie|Walk and market|Y|3|15|45;Subhash Chowk Dalhousie|Walk and market|Y|3|15|45;Dalhousie Market|Explore|Y|3|15|45;Old Dalhousie|Architecture and walk|Y|3|15|45;Khajjiar|Meadow|Y|25|70|30;Khajjiar Lake|Walk and views|P|25|70|30;Khajji Nag Temple Khajjiar|Temple visit|Y|25|70|30;Khajjiar Meadow|Walk and views|Y|25|70|30;Kalatop|Forest area|Y|20|55|30;Kalatop Khajjiar Sanctuary|Forest walk if permitted|Y|25|60|60;Lakkad Mandi|Scenic stop if road is safe|Y|20|60|30"],
+["Amritsar","Hotel R V Regency","Amritsar|Arrive, explore, overnight|Y|3|15|-;Golden Temple Amritsar|Allow time for security and queues|Y|1.9|10|30;Jallianwala Bagh Amritsar|Historical visit|N|1.9|10|30;Attari Wagah Border|Ceremony if timing allows|Y|29|70|-;Heritage Street Amritsar|Old-city walk|N|2|10|30;Old City Market Amritsar|Food and shopping|N|2|10|30"]
+];
+const P=[];A.forEach(a=>a[2].split(";").forEach(r=>{const x=r.split("|");P.push({area:a[0],hotel:a[1],n:x[0],d:x[1],i:x[2],km:x[3],car:x[4],w:x[5]})}));
+const IL={Y:"In package",N:"Not in package",P:"Partly / unclear",C:"Conditional"};
+const $=id=>document.getElementById(id);
+const a=(h,l,c="")=>`<a class="btn ${c}" target="_blank" rel="noopener" href="${h}">${l}</a>`;
+const ls={get(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const vis=new Set(ls.get("vis",[])),stayDone=new Set(ls.get("stay",[]));
+const tot=H.reduce((s,h)=>s+h[10],0),nights=H.reduce((s,h)=>s+h[7],0);
+const days=Math.ceil((new Date(2026,11,5)-new Date())/864e5);
+const HA=["Kasauli","Shimla","Narkanda","Jibhi","Tirthan","Kasol","Manali","Bir Billing","Palampur","Dharamshala","Dalhousie","Amritsar"];
+function toast(t){const d=document.createElement("div");d.className="toast";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2200)}
+function copy(t){const done=()=>toast("Copied: "+t.slice(0,40));try{navigator.clipboard.writeText(t).then(done,fb)}catch(e){fb()}function fb(){const x=document.createElement("textarea");x.value=t;document.body.appendChild(x);x.select();try{document.execCommand("copy");done()}catch(e){toast("Copy not allowed here")}x.remove()}}
+
+const T=[
+{n:"Paschim Express",no:"12925",cc:"3A",show:["Borivali","Chandigarh"],pnr:"8754891146",date:"4 – 5 Dec 2026",cls:"Third AC (3A)",seat:"RAC 20 / RAC 21",route:"Bandra Terminus → Ludhiana Junction",st:[["Bandra Terminus","—","4 Dec, 11:30 AM"],["Borivali","4 Dec, 11:53 AM","4 Dec, 11:55 AM"],["Hazrat Nizamuddin, Delhi","5 Dec, 9:54 AM","5 Dec, 9:56 AM"],["New Delhi","5 Dec, 10:40 AM","5 Dec, 11:05 AM"],["Ambala Cantt","5 Dec, 2:30 PM","5 Dec, 2:40 PM"],["Chandigarh","5 Dec, 3:23 PM","5 Dec, 3:32 PM"],["Ludhiana Junction","5 Dec, 5:39 PM","—"]]},
+{n:"Golden Temple Mail",no:"12904",cc:"3A",pnr:"2746200264",date:"22 – 23 Dec 2026",cls:"Third AC (3A)",seat:"B6/30 (Upper), B6/32 (Side Upper)",route:"Amritsar Junction → Bandra Terminus",st:[["Amritsar Junction","—","22 Dec, 6:55 PM"],["Bandra Terminus","23 Dec, 11:55 PM","—"]]}];
+const tText=t=>`${t.n} (${t.no})\nPNR: ${t.pnr}\nJourney: ${t.date}\nClass: ${t.cls}\nSeat: ${t.seat}\nPassengers: Ashish, Priyanka`;
+const docBy=(g,k)=>cfg.i.find(d=>d[0]==g&&d[1].toLowerCase().includes(k.toLowerCase()));
+const pdfBtns=(d,l)=>d?`<a class="btn p ib2" aria-label="View" title="View" data-view="${E(prevUrl(d))}" data-vt="${E(d[1])}" data-vd="${E(durl(d))}" data-vo="${E(vurl(d))}" target="_blank" rel="noopener" href="${E(vurl(d))}">${ico(IC.eye)}</a>`:"";
+const HELP=[["139","All-in-one railway helpline, complaints and enquiries","139"],["139, press 1","Medical and security assistance","139"],["139, press 2","PNR, train timings and ticket enquiries","139"],["139, press 3","Catering complaints","139"],["139, press 4","General complaints","139"],["139, press 5","Vigilance complaints","139"],["139, press 6","Parcel and goods enquiries","139"],["139, press 9","Complaint status","139"],["112","National emergency assistance (Police, Fire, Ambulance)","112"],["1098","Child helpline","1098"]];
+const trainCard=(t,full)=>{const d=docBy("Trains",t.no);return `<div class="card"><div><h3>${t.n} (${t.no})</h3><div class="meta">${t.route} · ${t.date}</div></div>
+<dl class="kv"><dt>PNR</dt><dd class="pn"><b>${t.pnr}</b><button class="ib" type="button" data-copy="${t.pnr}" aria-label="Copy PNR" title="Copy PNR">${ico(IC.copy)}</button></dd><dt>Passengers</dt><dd>Ashish, Priyanka</dd><dt>Class</dt><dd>${t.cls}</dd><dt>Coach / seat</dt><dd>${t.seat}</dd></dl>
+<div class="trow noprint"><button class="btn c sm" type="button" data-ext="https://enquiry.indianrail.gov.in/" data-ext-t="Live train status (Indian Railways)" data-cv="${t.no}" data-cl="Train number">${ico(IC.live)}Live status</button><a class="btn c sm" target="_blank" rel="noopener" href="https://www.confirmtkt.com/pnr-status/${t.pnr}">${ico(IC.tick)}PNR status</a><a class="btn ia" target="_blank" rel="noopener" href="https://www.confirmtkt.com/seatmap.php?class=${t.cc}" aria-label="Seat map" title="Seat map">${ico(IC.seat)}</a>${d?`<a class="btn p ia" aria-label="View ticket" title="View ticket" data-view="${E(prevUrl(d))}" data-vt="${E(d[1])}" data-vd="${E(durl(d))}" data-vo="${E(vurl(d))}" target="_blank" rel="noopener" href="${E(vurl(d))}">${ico(IC.eye)}</a>`:""}<button class="btn ia" type="button" aria-label="Copy details" title="Copy details" data-copy="${tText(t).replace(/\n/g,"&#10;")}">${ico(IC.copy)}</button></div>
+${full?`<div class="tw" style="margin-top:12px"><table><tr><th>Station</th><th>Arrival</th><th>Departure</th></tr>${t.st.filter(s=>!t.show||t.show.includes(s[0])).map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td><td>${s[2]}</td></tr>`).join("")}</table></div>`:""}</div>`};
+function trainPg(){$("train").innerHTML=`<h2>Trains</h2><p class="sub">Live status copies the train number and opens the Indian Railways enquiry page. PNR status and seat map open ConfirmTkt directly. Tap the eye icon to view a ticket; download is inside the viewer.</p><div class="note">The Paschim Express ticket ends at Ludhiana Junction, but your trip starts from Chandigarh (arrives 3:23 PM on 5 Dec). Confirm where you plan to get off. Both tickets show RAC or waiting-list style seats on the first train, so check the chart on the day.</div><div class="grid w">${T.map(t=>trainCard(t,1)).join("")}</div><div class="card" style="margin-top:20px"><div class="meta" style="font-weight:700;letter-spacing:.06em;color:var(--acc)">SAVE THIS NUMBER</div><div style="font-size:44px;font-weight:800;line-height:1.1;margin:4px 0">139</div><div class="meta">Your main Indian Railways complaint and assistance helpline.</div><div class="row noprint" style="margin-top:12px"><a class="btn c" href="tel:139">${ico(IC.call)}Call 139</a></div></div>
+<h3 class="sec">Indian Railways – Emergency Helpline Numbers</h3><div class="card tw"><table><tr><th>Number</th><th>Purpose</th></tr>${HELP.map(([n,t,tel])=>`<tr><td><a href="tel:${tel}"><b>${n}</b></a></td><td>${t}</td></tr>`).join("")}</table></div>`}
+
+const t1=["Chandigarh","Kasauli","Shimla","Narkanda","Jibhi","Tirthan Valley","Kasol","Manali"].map(n=>({n,q:n+", India"}));
+const t2=["Manali","Bir","Palampur","Dharamshala","Dalhousie","Khajjiar","Amritsar"].map(n=>({n,q:n+", India"}));
+function home(){const v=vis.size;
+$("home").innerHTML=`<div class="hero"><div><div class="hk">Chandigarh to Amritsar</div><h2>5 – 22 Dec 2026</h2><p>Ashish &amp; Priyanka · ${H.length} stays · ${nights} nights</p></div><div class="hn"><b>${days>0?days:0}</b><span>${days>0?"days to go":"trip started"}</span></div><svg class="hm" viewBox="0 0 600 220" preserveAspectRatio="xMaxYMax meet" aria-hidden="true"><circle cx="470" cy="70" r="46" fill="#fff" opacity=".16"/><path d="M0 220L120 80l60 70 90-120 110 150 70-60 150 100z" fill="#fff" opacity=".14"/><path d="M120 220l110-90 60 50 100-110 120 150z" fill="#fff" opacity=".12"/><path d="M0 220l150-60 80 40 120-70 130 90 120-30v30z" fill="#fff" opacity=".14"/></svg></div>
+<div class="stats"><div class="stat"><b>${nights}</b><span>nights booked</span></div><div class="stat"><b>${H.length}</b><span>stays booked</span></div><div class="stat"><b>${stayDone.size} / ${H.length}</b><span>stays checked in</span></div><div class="stat"><b>${v} / ${P.length}</b><span>places visited</span></div></div>
+<div class="grid w" style="margin-bottom:22px">${T.map(t=>trainCard(t,0)).join("")}</div>
+
+<h3 style="margin-bottom:10px">Day by day</h3><div class="tl">${H.map((h,i)=>`<div class="it ${stayDone.has(i)?"done":""}"><input type="checkbox" aria-label="Checked in at ${h[0]}" data-stay="${i}" ${stayDone.has(i)?"checked":""}><div><b>${h[5]} → ${h[6]} · ${h[1]}</b><div class="meta">${h[0]} · ${h[7]} night${h[7]>1?"s":""}</div><div class="irow noprint" style="margin-top:8px">${ia(pin(h[0]+", "+h[1]),IC.map,"Pin","",1)}${ia(nav(h[0]+", "+h[1]),IC.nav,"Navigate","",1)}${R[i]?ia(routeUrl(R[i].s),IC.rt,"Open route "+(i+1),"",1):""}</div></div></div>`).join("")}</div>`;}
+
+const ISS=[
+["No view from the room",h=>"The room does not have the view we booked"+(h[4]&&h[4]!="Not specified"?" ("+h[4]+")":"")+"."],
+["Cleanliness issue",()=>"The room or bathroom is not clean."],
+["Water issue",()=>"There is a water problem (no water, no hot water or very low pressure)."],
+["Heater, AC or geyser not working",()=>"The heater, AC or geyser in our room is not working."],
+["Wrong room type",h=>"We were given a different room from the one we booked ("+h[2]+")."],
+["Noise or disturbance",()=>"The room is very noisy and we cannot rest."],
+["Wi-Fi or power problem",()=>"There is a Wi-Fi or power problem at the hotel."],
+["Check-in refused or delayed",()=>"The hotel is refusing or delaying our check-in."],
+["Booking not found",()=>"The hotel cannot find our booking."],
+["Other problem",()=>"We are facing a problem at the hotel."]];
+const hs={};
+const attNames=i=>{const f=hs[i]&&hs[i].files||[];return f.length?f.map(x=>E(x.name)).join(", "):"No file attached"};
+function vline(i){const v=docBy("Hotels",H[i][0]);return v&&hs[i]&&hs[i].vc?"\nVoucher: "+surl(v):""}
+function helpMsg(i){const h=H[i],s=hs[i]||{},x=(s.v===""||s.v==null)?null:ISS[+s.v];if(!x)return"";return BASE+"\nWe need help with our hotel.\nHotel: "+h[0]+", "+h[1]+"\nStay: "+h[5]+" to "+h[6]+" ("+h[7]+" night"+(h[7]>1?"s":"")+")\nRoom booked: "+h[2]+"\nProblem: "+x[0]+"\n"+x[1](h)+(s.n?"\nDetails: "+s.n:"")+"\nPlease call us or arrange a fix as soon as possible."+vline(i)}
+function updHelp(i){const m=helpMsg(i),p=$("pv"+i),w=$("hw"+i);if(!p||!w)return;p.hidden=!m;p.textContent=m;w.classList.toggle("dis",!m);w.href=m?waAgent(m):"#"}
+document.addEventListener("change",e=>{const d=e.target.dataset;if(d&&d.iss!==undefined){const i=+d.iss;hs[i]=Object.assign(hs[i]||{},{v:e.target.value});updHelp(i)}});
+document.addEventListener("input",e=>{const d=e.target.dataset;if(d&&d.note!==undefined){const i=+d.note;hs[i]=Object.assign(hs[i]||{},{n:e.target.value.trim()});updHelp(i)}});
+
+document.addEventListener("toggle",e=>{const t=e.target;if(t.dataset&&t.dataset.hd!==undefined){const i=+t.dataset.hd;hs[i]=Object.assign(hs[i]||{},{open:t.open})}},true);
+document.addEventListener("change",e=>{const t=e.target,d=t.dataset||{};
+if(t.id=="dcat"){dcat=t.value;docsPg();const n=$("dcat");if(n)n.focus();return}
+if(d.att!==undefined){const i=+d.att;hs[i]=Object.assign(hs[i]||{},{files:[...t.files]});const n=$("af"+i);if(n)n.innerHTML=attNames(i)}
+else if(d.vc!==undefined){const i=+d.vc;hs[i]=Object.assign(hs[i]||{},{vc:t.checked});updHelp(i)}});
+document.addEventListener("click",async e=>{const el=e.target.closest("[data-shh]");if(!el)return;const i=+el.dataset.shh,m=helpMsg(i);if(!m)return toast("Choose a problem first");
+const files=(hs[i]&&hs[i].files)||[],data={title:"Problem at "+H[i][0],text:m};
+if(files.length){if(navigator.canShare&&navigator.canShare({files}))data.files=files;else toast("This device cannot attach files from here. Sharing the message only.")}
+if(navigator.share){try{await navigator.share(data)}catch(x){}}else{copy(m);toast("Share menu not available here. Message copied; paste it in any app.")}});
+function stays(){
+const ids=[["Ashish · Aadhaar","Ashish","Aadhaar"],["Ashish · PAN","Ashish","PAN"],["Priyanka · Aadhaar","Priyanka","Aadhaar"],["Priyanka · PAN","Priyanka","PAN"]];
+const idb=ids.map(([k,n,t])=>{const d=docBy("ID proofs",k),ok=d&&d[3];return `<span class="${ok?"":"dmiss"}"><a class="btn" ${ok?`data-view="${E(prevUrl(d))}" data-vt="${E(d[1])}" data-vd="${E(durl(d))}" data-vo="${E(vurl(d))}" target="_blank" rel="noopener"`:""} href="${ok?E(vurl(d)):"#docs"}">${ico(IC.doc)}${n} · ${t}</a></span>`}).join("");
+$("stays").innerHTML=`<div class="sh"><div><h2>Stays</h2><p class="sub" style="margin:0">Tick a stay once you have checked in.</p></div><div class="idrow noprint"><b>ID documents</b><div class="idg">${idb}</div></div></div>
+<div class="note">Hotel Moksha's original link searched 8–9 Dec; it is set to 9–10 Dec here to match your stay. Booking links are rebuilt from hotel IDs, so confirm dates on MakeMyTrip.</div>
+<div class="grid sg">${H.map((h,i)=>{const v=docBy("Hotels",h[0]),m=helpMsg(i),sv=hs[i]&&hs[i].v!=null?String(hs[i].v):"";return `<div class="card rc">${mmt(h)?`<a class="rarrow noprint" target="_blank" rel="noopener" href="${E(mmt(h))}" aria-label="Open ${E(h[0])} on MakeMyTrip" title="MakeMyTrip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg></a>`:""}<label style="display:flex;gap:10px;align-items:flex-start"><input type="checkbox" data-stay="${i}" ${stayDone.has(i)?"checked":""}><span><h3>${h[0]}</h3><span class="meta">${h[1]} · ${h[5]} → ${h[6]} · ${h[7]} night${h[7]>1?"s":""}</span></span></label>
+<dl class="kv"><dt>Room</dt><dd>${h[2]}${h[3]?" · "+h[3]+" sq ft":""}</dd><dt>View</dt><dd>${h[4]}</dd><dt>Check-in / out</dt><dd>2:00 PM / 11:00 AM</dd></dl>
+<div class="irow">${ia(pin(h[0]+", "+h[1]),IC.map,"Pin","",1)}${ia(nav(h[0]+", "+h[1]),IC.nav,"Navigate","",1)}${v?pdfBtns(v,"View voucher").replace("ib2","ia")+`<button class="btn ia" type="button" data-dsh="${cfg.i.indexOf(v)}" aria-label="Share voucher" title="Share voucher">${ico(IC.share)}</button>`:""}</div>
+<details class="help noprint" data-hd="${i}" ${hs[i]&&hs[i].open?"open":""}><summary>Problem at this stay?</summary><div class="meta" style="margin-bottom:8px">Pick the problem. The message to your travel agent is written for you. Add photos or files if you like.</div>
+<label class="dd" style="margin-bottom:8px"><span>Problem</span><select data-iss="${i}" aria-label="Problem at ${E(h[0])}"><option value="">Choose a problem…</option>${ISS.map((x,k)=>`<option value="${k}" ${sv===String(k)?"selected":""}>${x[0]}</option>`).join("")}</select></label>
+<input type="text" data-note="${i}" placeholder="Add a detail (optional), e.g. room number" value="${E(hs[i]&&hs[i].n?hs[i].n:"")}" aria-label="Extra detail">
+<div class="pv" id="pv${i}" ${m?"":"hidden"}>${E(m)}</div>
+<div class="att"><label class="btn" for="at${i}">${ico(IC.doc)}Attach photo or file</label><input type="file" id="at${i}" data-att="${i}" multiple accept="image/*,video/*,application/pdf" hidden><div class="meta" id="af${i}">${attNames(i)}</div>${v?`<label class="gpsl"><input type="checkbox" data-vc="${i}" ${hs[i]&&hs[i].vc?"checked":""}><span>Include the voucher link in the message</span></label>`:""}</div>
+<div class="irow"><a class="btn wa ia ${m?"":"dis"}" id="hw${i}" target="_blank" rel="noopener" href="${m?waAgent(m):"#"}" aria-label="Send message only on WhatsApp" title="Send message only on WhatsApp">${ico(IC.wa)}</a><button class="btn c ia" type="button" data-shh="${i}" aria-label="Share with attachment" title="Share with attachment">${ico(IC.share)}</button><a class="btn ia" href="tel:${AG.tel}" aria-label="Call agent" title="Call agent">${ico(IC.call)}</a></div><div class="meta">WhatsApp icon sends the message only. Share icon opens your phone share menu with the message and any files you added.</div></details></div>`}).join("")}</div>`}
+
+function routesPg(){$("routes").innerHTML=`<h2>Routes</h2><p class="sub">Eleven legs. Each opens in Google Maps with every stop in order.</p><div class="grid">${R.map((r,i)=>`<div class="card rc"><a class="rarrow noprint" target="_blank" rel="noopener" href="${routeUrl(r.s)}" aria-label="Navigate route ${i+1}: ${r.t}" title="Navigate"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg></a><h3>${i+1}. ${r.t}</h3><div class="meta">${r.s.length} stops</div><div class="stops">${r.s.map(s=>`<span>${s.n}<a class="sa noprint" target="_blank" rel="noopener" href="${nav(s.q)}" aria-label="Directions to ${s.n}" title="Directions"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg></a></span>`).join("")}</div><div class="row rrow noprint"><a class="btn p" target="_blank" rel="noopener" href="${routeUrl(r.s)}">${ico(IC.rt)}Open route ${i+1}</a><a class="btn" target="_blank" rel="noopener" href="${nav(r.s[0].q)}" title="Go to start from me">${ico(IC.nav)}Start from me</a></div></div>`).join("")}</div>`;}
+
+// Map (offline sketch; click a pin to navigate)
+const CO={Chandigarh:[30.7333,76.7794,"r"],Kasauli:[30.8987,76.9647,"r"],Shimla:[31.1048,77.1734,"r"],Narkanda:[31.265,77.457,"r"],Jibhi:[31.599,77.35,"l"],Tirthan:[31.633,77.44,"r"],Kasol:[32.01,77.315,"r"],Manali:[32.2396,77.1887,"r"],Barot:[32.05,76.87,"r"],"Bir Billing":[32.045,76.72,"l"],Palampur:[32.1109,76.5363,"l"],Dharamshala:[32.219,76.3234,"l"],Dalhousie:[32.5387,75.971,"l"],Amritsar:[31.634,74.8723,"r"]};
+const ORDER=["Chandigarh","Kasauli","Shimla","Narkanda","Jibhi","Tirthan","Kasol","Manali","Bir Billing","Palampur","Dharamshala","Dalhousie","Amritsar"];
+let sel="Chandigarh";
+function aprog(n){const l=P.filter(p=>p.area==n);return l.length?l.filter(p=>vis.has(P.indexOf(p))).length/l.length:0}
+function panel(){const c=CO[sel],hi=HA.indexOf(sel),h=H[hi],l=P.filter(p=>p.area==sel);const s=sel=="Chandigarh"?"Chandigarh Railway Station, Chandigarh, India":sel+", India";
+return`<div class="card"><h3>${sel}</h3><div class="meta">${h?h[0]+" · "+h[5]+" → "+h[6]:sel=="Chandigarh"?"Trip start (train arrives 5 Dec, 3:23 PM)":"No stay booked here"}</div><div class="row">${a(nav(h?h[0]+", "+h[1]:s),"Navigate here","p")}${a(pin(h?h[0]+", "+h[1]:s),"Open pin")}</div>
+${l.length?`<div class="tw" style="margin-top:10px"><table>${l.map(p=>{const i=P.indexOf(p),q=p.n+", "+p.area+", India";return`<tr><td><input type="checkbox" data-v="${i}" ${vis.has(i)?"checked":""} aria-label="Visited ${p.n}"></td><td>${p.n}</td><td><span class="chip ${p.i}">${IL[p.i]}</span></td><td>${a(nav(q),"Navigate")}</td></tr>`}).join("")}</table></div>`:""}</div>`}
+const MN="Showing Google Maps. Pick a stop below to move the map. Navigate opens turn-by-turn directions in Google Maps.";
+const mapNote=t=>{const n=$("mnote");if(n)n.textContent=t||MN};
+const gq=()=>{const h=H[HA.indexOf(sel)];return h?h[0]+", "+h[1]+", India":(sel=="Chandigarh"?"Chandigarh Railway Station, Chandigarh, India":sel+", India")};
+function gDraw(){const g=$("gwrap"),u="https://maps.google.com/maps?q="+q(gq())+"&z=11&output=embed";if(g.dataset.u!=u){g.dataset.u=u;g.innerHTML=`<iframe title="Google Map" src="${u}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>`}}
+function mapPg(){const m=$("map");
+if(!$("gwrap")){m.innerHTML=`<h2>Map</h2><p class="sub">Google Maps only. Tap a stop to see it on the map and start navigation.</p><div class="chips noprint" id="mchips"></div><div class="mapgrid"><div id="mpanel"></div><div class="mapcol"><div class="mapbox"><div id="gwrap"></div></div><div class="meta" id="mnote" style="margin:8px 2px 0"></div></div></div>`;mapNote("")}
+$("mchips").innerHTML=[...ORDER,"Barot"].map(n=>`<button type="button" data-pin="${n}" class="${n==sel?"on":""}">${n}</button>`).join("");
+$("mpanel").innerHTML=panel();
+if(m.classList.contains("on"))gDraw()}
+
+// Places
+let area="All",onlyIn=false,term="";
+$("places").innerHTML=`<h2>Places</h2><p class="sub">Package status and distance from the package hotel. <span id="pc"></span></p><div class="tools noprint"><input id="s" type="search" placeholder="Search places" aria-label="Search places"><button class="btn" id="only">Only in package</button></div><div class="chips noprint" id="achips">${["All",...A.map(x=>x[0])].map(x=>`<button data-a="${x}">${x}</button>`).join("")}</div><div class="grid" id="plist"></div>`;
+function drawPlaces(){const list=P.filter(p=>(area=="All"||p.area==area)&&(!onlyIn||p.i=="Y")&&(p.n+p.d+p.area).toLowerCase().includes(term));
+$("plist").innerHTML=list.length?list.map(p=>{const s=p.n+", "+p.area+", India";return`<div class="card rc"><a class="rarrow noprint" target="_blank" rel="noopener" href="${nav(s)}" aria-label="Directions to ${E(p.n)}" title="Directions"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg></a><h3>${p.n}</h3><div class="meta">${p.area} · ${p.d}</div><div class="row" style="margin-top:8px"><span class="chip ${p.i}">${IL[p.i]}</span></div><dl class="kv"><dt>Package hotel</dt><dd>${p.hotel}</dd><dt>Distance</dt><dd>${p.km=="-"?"–":p.km+" km"}</dd><dt>Car / walk</dt><dd>${p.car=="-"?"–":p.car+" min"} / ${p.w=="-"?"not practical":p.w+" min"}</dd></dl></div>`}).join(""):`<p class="meta">No places match. Clear the search or pick another area.</p>`;
+$("pc").textContent=list.length+" places";
+document.querySelectorAll("#achips button").forEach(b=>b.classList.toggle("on",b.dataset.a==area));$("only").classList.toggle("on",onlyIn)}
+$("achips").onclick=e=>{if(e.target.dataset.a){area=e.target.dataset.a;drawPlaces()}};
+$("only").onclick=()=>{onlyIn=!onlyIn;drawPlaces()};$("s").oninput=e=>{term=e.target.value.toLowerCase();drawPlaces()};
+
+// Tracker
+let tf="All",hide=false,ts="all";
+function tracker(){const l=P.map((p,i)=>({p,i})).filter(x=>(tf=="All"||x.p.area==tf)&&(ts=="all"||(ts=="done"?vis.has(x.i):!vis.has(x.i))));
+$("tracker").innerHTML=`<h2>Visit tracker</h2><p class="sub"><span id="tc">${vis.size} of ${P.length} visited</span></p><div class="bar"><i id="tb" style="width:${vis.size/P.length*100}%"></i></div>
+<div class="tools noprint"><label class="dd"><span>Area</span><select id="tsel" aria-label="Area">${["All",...A.map(x=>x[0])].map(x=>`<option ${x==tf?"selected":""}>${x}</option>`).join("")}</select></label><label class="dd"><span>Status</span><select id="tst" aria-label="Status"><option value="all" ${ts=="all"?"selected":""}>All places</option><option value="todo" ${ts=="todo"?"selected":""}>Not visited</option><option value="done" ${ts=="done"?"selected":""}>Visited</option></select></label><button class="btn sm" id="treset" type="button">Reset</button></div>
+<div class="card tw"><table><tr><th>Done</th><th>Place</th><th class="ca">Area</th><th>Package</th><th class="noprint"></th></tr>${l.map(({p,i})=>`<tr><td><input type="checkbox" data-v="${i}" ${vis.has(i)?"checked":""} aria-label="Visited ${p.n}"></td><td>${p.n}<span class="ar">${p.area}</span></td><td class="ca">${p.area}</td><td><span class="chip ${p.i}">${IL[p.i]}</span></td><td class="noprint"><a class="sa go" target="_blank" rel="noopener" href="${nav(p.n+", "+p.area+", India")}" aria-label="Directions to ${E(p.n)}" title="Directions"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg></a></td></tr>`).join("")}</table></div>`;
+$("tsel").onchange=e=>{tf=e.target.value;tracker()};$("tst").onchange=e=>{ts=e.target.value;tracker()};$("treset").onclick=()=>{if(confirm("Clear all visited and check-in ticks?")){vis.clear();stayDone.clear();save();all()}}}
+function save(){ls.set("vis",[...vis]);ls.set("stay",[...stayDone])}
+function all(){routesPg();trainPg();home();stays();mapPg();tracker();drawPlaces();agentPg()}
+
+document.addEventListener("change",e=>{const d=e.target.dataset;
+if(d.v!==undefined){const i=+d.v;e.target.checked?vis.add(i):vis.delete(i);save();home();mapPg();document.querySelectorAll(`[data-v="${i}"]`).forEach(c=>c.checked=vis.has(i));const n=$("tc");if(n){n.textContent=vis.size+" of "+P.length+" visited";$("tb").style.width=vis.size/P.length*100+"%"}}
+if(d.stay!==undefined){const i=+d.stay;e.target.checked?stayDone.add(i):stayDone.delete(i);save();home();stays()}});
+document.addEventListener("click",e=>{const el=e.target.closest("[data-copy],[data-act],[data-pin],[data-mv]");if(!el)return;
+if(el.dataset.copy)copy(el.dataset.copy);
+if(el.dataset.pin){sel=el.dataset.pin;mapPg()}
+const act=el.dataset.act;if(act)doAct(act)});
+document.addEventListener("keydown",e=>{if(e.key=="Enter"&&e.target.dataset&&e.target.dataset.pin){sel=e.target.dataset.pin;mapPg()}});
+
+const pageUrl=()=>location.href.split("#")[0];
+const summary=()=>"Trip details · 5–22 Dec 2026 (Ashish & Priyanka)\nOut: Paschim Express 12925, PNR 8754891146, 4 Dec 11:30 AM Bandra Terminus\nBack: Golden Temple Mail 12904, PNR 2746200264, 22 Dec 6:55 PM Amritsar\nStays: "+H.map(h=>h[1]+" ("+h[5]+")").join(", ")+"\nAgent: Dinesh Veerani, Hotline Holidays LLP, +91 99301 39139";
+function mkImg(){const c=document.createElement("canvas");c.width=1080;c.height=1560;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,1080,1560);x.fillStyle="#ee5a2a";x.fillRect(0,0,1080,16);
+let y=130;const t=(s,sz,w,col)=>{x.font=w+" "+sz+"px sans-serif";x.fillStyle=col;x.fillText(s,60,y);y+=sz*1.6};
+t("Trip details",64,700,"#0f172a");t("5 – 22 Dec 2026 · Ashish & Priyanka",32,400,"#64748b");y+=20;
+t("Trains",36,700,"#ee5a2a");T.forEach(r=>{t(r.n+" "+r.no+" · "+r.date,32,600,"#0f172a");t("PNR "+r.pnr+" · "+r.seat,28,400,"#475569")});y+=20;
+t("Stays",36,700,"#ee5a2a");H.forEach(h=>t(h[5]+" – "+h[1]+" · "+h[0],28,400,"#0f172a"));y+=20;t("Travel agent",36,700,"#ee5a2a");t("Dinesh Veerani · Hotline Holidays LLP",30,600,"#0f172a");t("+91 99301 39139 · Info@hotlineholidays.com",28,400,"#475569");return c}
+function vcf(){const v=["BEGIN:VCARD","VERSION:3.0","FN:"+AG.name,"ORG:"+AG.co,"TEL;TYPE=WORK,VOICE:"+AG.tel,"EMAIL:"+AG.mail,"URL:"+AG.web,"ADR;TYPE=WORK:;;"+AG.addr.replace(/,/g,"\\,")+";;;;","END:VCARD"].join("\r\n");const u=URL.createObjectURL(new Blob([v],{type:"text/vcard"}));const l=document.createElement("a");l.href=u;l.download="Dinesh-Veerani-Hotline-Holidays.vcf";document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);toast("Contact file saved")}
+function doAct(k){
+if(k=="vcf")return vcf();
+if(k=="pdf"||k=="pdfall"){document.body.classList.toggle("all",k=="pdfall");try{window.print()}catch(e){toast("Print blocked. Open the link in your browser, then Print > Save as PDF")}setTimeout(()=>document.body.classList.remove("all"),500)}
+if(k=="wa")window.open("https://wa.me/?text="+q(summary()+"\n"+pageUrl()),"_blank");
+if(k=="share"){if(navigator.share)navigator.share({title:"Trip details",text:summary(),url:pageUrl()}).catch(()=>{});else{copy(summary()+"\n"+pageUrl())}}
+if(k=="img"){const c=mkImg();c.toBlob(b=>{const f=new File([b],"trip-details.png",{type:"image/png"});
+if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:"Trip details"}).catch(()=>{});
+else{const o=document.createElement("div");o.className="ov";o.innerHTML=`<div><img alt="Trip summary" src="${c.toDataURL()}"><p class="meta">Press and hold the image to save or share it.</p><button class="btn p">Close</button></div>`;o.onclick=ev=>{if(ev.target==o||ev.target.tagName=="BUTTON")o.remove()};document.body.appendChild(o)}})}}
+
+function route(){const h=(location.hash||"#home").slice(1);const id=["home","train","stays","routes","map","places","tracker","docs","admin","camera","agent"].includes(h)?h:"home";
+if(id!="camera"&&window.camStop)camStop();document.querySelectorAll(".pg").forEach(p=>p.classList.toggle("on",p.id==id));
+document.querySelectorAll("nav a").forEach(x=>x.classList.toggle("on",x.getAttribute("href")=="#"+id));const on=document.querySelector("nav a.on");if(on&&on.scrollIntoView)on.scrollIntoView({inline:"center",block:"nearest"});scrollTo(0,0);if(id=="map")mapPg();setTimeout(fabUpd,60)}
+const AG={name:"Dinesh Veerani",co:"Hotline Holidays LLP",tel:"+919930139139",telShow:"+91 99301 39139",wa:"919930139139",mail:"Info@hotlineholidays.com",web:"https://hotlineholidays.com",webShow:"hotlineholidays.com",addr:"Hotline Holidays LLP, Shop No. 18, Ground Floor, Shree Krishna Dham Building, Ramdev Park Road, Near Zudio, Mira Road East, Mumbai, Maharashtra 401105"};
+const ico=p=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={call:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',wa:'<path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l2.1-5.3A8.5 8.5 0 1 1 21 11.5z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2z"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',web:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',map:'<path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',save:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>',doc:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.7l6.8-4M8.6 13.3l6.8 4"/>',cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',nav:'<path d="M3 11l18-8-8 18-2-8z"/>',rt:'<circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h7a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h7"/>',live:'<circle cx="12" cy="12" r="2"/><path d="M7.5 7.5a6 6 0 0 0 0 9M16.5 7.5a6 6 0 0 1 0 9"/>',tick:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M9 6v12"/>',seat:'<path d="M7 4h6a2 2 0 0 1 2 2v7H7zM5 13h12v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1zM8 18v2M14 18v2"/>',chat:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',send:'<path d="M4 12l16-8-6 16-3-7z"/>',vid:'<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/>'};
+const ia=(h,icon,label,c="",ext)=>`<a class="btn ia ${c}" href="${h}"${ext?' target="_blank" rel="noopener"':""} aria-label="${label}" title="${label}">${ico(icon)}</a>`;
+const la=(h,l,c="",ext)=>`<a class="btn ${c}" href="${h}"${ext?' target="_blank" rel="noopener"':""}>${l}</a>`;
+const waAgent=t=>"https://wa.me/"+AG.wa+"?text="+q(t);
+const BASE="Hi Dinesh, we are Ashish & Priyanka, travelling from 5 to 22 Dec 2026 (Himachal & Amritsar).";
+const MSG=[
+["General help","Ask any question about the trip",()=>BASE+" I need some help with my trip."],
+["Change or cancel a booking","Hotel, cab or train change",()=>BASE+" I need help changing a booking.\nBooking / hotel: "],
+["Train ticket query","Sends both PNRs",()=>BASE+"\nPaschim Express 12925, PNR 8754891146\nGolden Temple Mail 12904, PNR 2746200264\nI have a question about the train tickets."],
+["Hotel problem","Check-in, room or payment issue",()=>BASE+" I have a problem at a hotel.\nHotel: \nIssue: "],
+["Urgent: call me back","Emergency on the road",()=>"URGENT: "+BASE+" I need help right now. Please call me back as soon as you can."],
+["Send my full itinerary","Trip summary with PNRs and stays",()=>BASE+"\n\n"+summary()]];
+const agBtns=(more)=>ia("tel:"+AG.tel,IC.call,"Call","c")+ia(waAgent(BASE+" I need some help with my trip."),IC.wa,"WhatsApp","wa",1)+ia("mailto:"+AG.mail+"?subject="+q("Trip query: 5-22 Dec 2026"),IC.mail,"Email")+(more?ia(AG.web,IC.web,"Website","",1):"");
+const ME={name:"Ashish",tel:"+919137880814",show:"+91 91378 80814",wa:"919137880814"};
+const waMe="https://wa.me/"+ME.wa+"?text="+q("Hi Ashish, it's Priyanka. Please call me when you can.");
+const meCard=()=>`<div class="card ag me"><div class="agh"><span class="av" aria-hidden="true">A</span><div><div class="meta">Call first</div><h3>Ashish</h3><div class="meta">${ME.show}</div></div></div><div class="acts noprint">${la("tel:"+ME.tel,ico(IC.call)+"Call Ashish","c")}${la(waMe,ico(IC.wa)+"WhatsApp","wa",1)}</div></div>`;
+$("sidecall").innerHTML=`<div class="callcard"><small>Call first</small><div class="ch"><b>Ashish</b><div class="irow">${ia("tel:"+ME.tel,IC.call,"Call Ashish","c")}${ia(waMe,IC.wa,"WhatsApp Ashish","wa",1)}</div></div></div><div class="callcard"><small>Your travel agent</small><div class="ag2h"><span class="av" aria-hidden="true">DV</span><div><b>${AG.name}</b><span class="mini">${AG.co}</span></div></div><div class="ag2l"><a href="tel:${AG.tel}">${AG.telShow}</a><a href="mailto:${AG.mail}">${AG.mail}</a></div><div class="ag2f"><div class="irow">${ia("tel:"+AG.tel,IC.call,"Call agent","c")}${ia(waAgent(BASE+" I need some help with my trip."),IC.wa,"WhatsApp agent","wa",1)}${ia("mailto:"+AG.mail,IC.mail,"Email agent")}</div><a class="full" href="#agent">Full details →</a></div></div>`;
+$("foot").innerHTML=`<div>Agent: <b>${AG.name}</b>, ${AG.co} · <a href="tel:${AG.tel}">${AG.telShow}</a> · <a href="mailto:${AG.mail}">${AG.mail}</a><br><span>Trip details · 5 – 22 Dec 2026</span></div><div class="r">${agBtns(0)}</div>`;
+function agentPg(){$("agent").innerHTML=`<h2>Travel agent</h2><p class="sub">Your trip is booked through ${AG.co}. Tap to call or message.</p>
+<div class="card ag"><div class="agh"><span class="av" aria-hidden="true">DV</span><div><h3>${AG.name}</h3><div class="meta">${AG.co}</div></div></div>
+<div class="irow noprint">${agBtns(1)}</div>
+<dl class="kv"><dt>Phone</dt><dd><a href="tel:${AG.tel}">${AG.telShow}</a></dd><dt>WhatsApp</dt><dd><a href="https://wa.me/${AG.wa}" target="_blank" rel="noopener">${AG.telShow}</a></dd><dt>Email</dt><dd><a href="mailto:${AG.mail}">${AG.mail}</a></dd><dt>Website</dt><dd><a href="${AG.web}" target="_blank" rel="noopener">${AG.webShow}</a></dd><dt>Address</dt><dd>${AG.addr}</dd></dl>
+<div class="irow noprint">${ia(G+"search/?api=1&query="+q(AG.addr),IC.map,"Open in Maps","",1)}<button class="btn ia" data-copy="${AG.addr}" aria-label="Copy address" title="Copy address">${ico(IC.copy)}</button><button class="btn ia" data-copy="${AG.telShow}" aria-label="Copy phone" title="Copy phone">${ico(IC.call)}</button><button class="btn ia" data-act="vcf" aria-label="Save contact" title="Save contact">${ico(IC.save)}</button></div></div>
+<h3 class="sec">Quick WhatsApp messages</h3><p class="sub" style="margin-bottom:14px">Opens WhatsApp with the message already typed. Edit it before sending.</p>
+<div class="grid w">${MSG.map(m=>`<div class="card"><h3>${m[0]}</h3><div class="meta">${m[1]}</div><div class="irow noprint">${ia(waAgent(m[2]()),IC.wa,"Send on WhatsApp","wa",1)}<button class="btn ia" aria-label="Copy message" title="Copy message" data-copy="${m[2]().replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/\n/g,"&#10;")}">${ico(IC.copy)}</button></div></div>`).join("")}</div>`}
+// ===== Camera: location -> category -> folder =====
+const CAT=["Nature","Mountains","Rivers","Beaches","Forests","Waterfalls","Historical places","Tourist attractions","Temples and monuments","Hotels and stays","Restaurants","Streets and markets","Buildings and properties","Personal","Work","Other"];
+const F=[["country","Country"],["state","State"],["district","District"],["city","City"],["town","Town"],["village","Village"],["area","Area"],["street","Street"],["place","Exact place or landmark"],["stay","Stay / hotel / residence"],["other","Other location"]];
+const LOC=("Himachal Pradesh|Solan|town|Kasauli;Himachal Pradesh|Shimla|city|Shimla;Himachal Pradesh|Shimla|town|Narkanda;Himachal Pradesh|Shimla|town|Kufri;Himachal Pradesh|Kullu|village|Jibhi;Himachal Pradesh|Kullu|village|Tirthan Valley;Himachal Pradesh|Kullu|village|Gushaini;Himachal Pradesh|Kullu|village|Kasol;Himachal Pradesh|Kullu|town|Manikaran;Himachal Pradesh|Kullu|town|Manali;Himachal Pradesh|Lahaul and Spiti|village|Sissu;Himachal Pradesh|Mandi|village|Barot;Himachal Pradesh|Kangra|village|Bir;Himachal Pradesh|Kangra|town|Palampur;Himachal Pradesh|Kangra|city|Dharamshala;Himachal Pradesh|Chamba|town|Dalhousie;Himachal Pradesh|Chamba|village|Khajjiar;Punjab|Amritsar|city|Amritsar;Chandigarh|Chandigarh|city|Chandigarh;Delhi|New Delhi|city|New Delhi;Maharashtra|Mumbai Suburban|city|Mumbai").split(";").map(r=>{const x=r.split("|");return{st:x[0],di:x[1],ty:x[2],n:x[3]}});
+const kv=s=>{const o={};s.split(";").forEach(r=>{const[k,v]=r.split(":");o[k]=v.split(",")});return o};
+const AR=kv("Manali:Old Manali,Vashisht,Solang Valley;Dharamshala:McLeodganj,Bhagsu;Dalhousie:Old Dalhousie;Bir:Bir Tibetan Colony,Billing;Shimla:The Ridge,Lakkar Bazaar;Amritsar:Golden Temple area,Heritage Street;Kasauli:Sunset Point,Gilbert Trail;Mumbai:Andheri,Bandra,Mira Road");
+const STR=kv("Manali:Mall Road;Shimla:The Mall;Dalhousie:Subhash Chowk,Gandhi Chowk;Amritsar:Heritage Street,Old City Market;Kasol:Kasol Market;Mumbai:Ramdev Park Road");
+const STOPS=["Chandigarh","Kasauli","Shimla","Narkanda","Jibhi","Tirthan Valley","Kasol","Manali","Barot","Bir","Palampur","Dharamshala","Dalhousie","Khajjiar","Amritsar"];
+const PA=n=>({"Tirthan Valley":"Tirthan",Gushaini:"Tirthan",Bir:"Bir Billing",Kufri:"Shimla",Manikaran:"Kasol",Sissu:"Manali"}[n]||n);
+const E=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fv=k=>$("cf-"+k).value.trim(),setv=(k,v)=>{$("cf-"+k).value=v};
+const loc=()=>fv("city")||fv("town")||fv("village");
+function opt(k){const s=fv("state"),d=fv("district"),l=loc(),pa=l?PA(l):"",rows=LOC.filter(r=>(!s||r.st==s)&&(!d||r.di==d));
+if(k=="country")return["India"];if(k=="state")return[...new Set(LOC.map(r=>r.st))];if(k=="district")return[...new Set(rows.map(r=>r.di))];
+if(k=="city"||k=="town"||k=="village")return rows.filter(r=>r.ty==k).map(r=>r.n);
+if(k=="area")return l?AR[l]||[]:Object.values(AR).flat();if(k=="street")return l?STR[l]||[]:Object.values(STR).flat();
+if(k=="place")return P.filter(p=>!pa||p.area==pa).map(p=>p.n);if(k=="stay")return H.filter(h=>!pa||h[1]==pa).map(h=>h[0]);return[]}
+const dls=()=>F.forEach(([k])=>{$("dl-"+k).innerHTML=opt(k).map(o=>`<option value="${E(o)}">`).join("")});
+const san=s=>s.replace(/[\\/:*?"<>|]/g,"-").replace(/\s+/g," ").trim().replace(/^\.+/,"");
+const lp=()=>F.map(([k])=>san(fv(k))).filter(Boolean).filter((x,i,a)=>!i||x.toLowerCase()!=a[i-1].toLowerCase());
+const paths=()=>{$("cpath").textContent=[...lp(),san($("ccat").value)||"Uncategorised"].join(" / ")+" / Photos or Videos"};
+const saveLoc=()=>{const o={cat:$("ccat").value};F.forEach(([k])=>o[k]=fv(k));ls.set("camloc",o)};
+function autofill(){const r=LOC.find(x=>x.n==loc());if(r){setv("country","India");setv("state",r.st);setv("district",r.di)}guessCat();saveLoc();dls();paths()}
+function stopPick(n){F.forEach(([k])=>setv(k,""));if(n){const r=LOC.find(x=>x.n==n);setv("country","India");if(r){setv("state",r.st);setv("district",r.di)}setv(r?r.ty:"village",n);const h=H.find(h=>h[1]==PA(n));if(h)setv("stay",h[0])}saveLoc();dls();paths()}
+
+// storage: IndexedDB for gallery + remembered folder handle
+const DB=new Promise((ok,no)=>{try{const r=indexedDB.open("tripcam",1);r.onupgradeneeded=()=>{r.result.createObjectStore("media",{keyPath:"id",autoIncrement:true});r.result.createObjectStore("kv")};r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)}catch(e){no(e)}});DB.catch(()=>{});
+const tx=(s,m,f)=>DB.then(db=>new Promise((ok,no)=>{const t=db.transaction(s,m),r=f(t.objectStore(s));t.oncomplete=()=>ok(r&&r.result);t.onerror=t.onabort=()=>no(t.error)}));
+let fdir=null;
+async function perm(ask){if(!fdir)return false;const o={mode:"readwrite"};try{if(await fdir.queryPermission(o)=="granted")return true;return !!ask&&await fdir.requestPermission(o)=="granted"}catch(e){return false}}
+async function sub(d,n){for await(const[k,h] of d.entries())if(h.kind=="directory"&&k.toLowerCase()==n.toLowerCase())return h;return d.getDirectoryHandle(n,{create:true})}
+async function put(r){let d=fdir;for(const s of r.path.split("/"))d=await sub(d,s);const f=await d.getFileHandle(r.name,{create:true}),w=await f.createWritable();await w.write(r.blob);await w.close()}
+function fstat(){const ok=!!window.showDirectoryPicker;$("cfs").textContent=fdir?"Saving into your folder \""+fdir.name+"\". Subfolders are created once and reused. A copy also stays in the gallery below.":ok?"No folder chosen yet. Files stay in the gallery below until you choose one.":"This browser can't write to folders directly. Files stay in the gallery below. Use Download or ZIP to get them with their folders.";$("cdir").hidden=!ok;$("cdir").textContent=fdir?"Change folder":"Choose folder"}
+
+// camera: opens the phone's own camera app, then files the result by place and category
+let cur=null,shown=[];
+function ui(){const has=!!cur;$("rv").hidden=!has;$("cb2").hidden=!has;$("cb1").hidden=has}
+function review(kind,blob){if(cur)URL.revokeObjectURL(cur.u);const u=URL.createObjectURL(blob);cur={kind,blob,u};$("rv").innerHTML=kind=="photo"?`<img src="${u}" alt="Captured photo">`:`<video src="${u}" controls playsinline></video>`;ui()}
+function discard(){gpsPos=null;if(cur){URL.revokeObjectURL(cur.u);cur=null;$("rv").innerHTML=""}ui()}
+function fname(kind,L){const d=new Date(),p=n=>String(n).padStart(2,"0"),s=""+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+"_"+p(d.getHours())+p(d.getMinutes())+p(d.getSeconds())+"_"+String(d.getMilliseconds()).padStart(3,"0");return s+"_"+(L[L.length-1]||"media").replace(/ /g,"-").slice(0,40)+"."+ext(kind)}
+async function saveCur(){if(!cur)return;const L=lp(),cat=san($("ccat").value)||"Uncategorised",kind=cur.kind,r={kind,mime:cur.blob.type,blob:cur.blob,ts:Date.now(),cat,gps:gpsPos,loc:Object.fromEntries(F.map(([k])=>[k,fv(k)])),path:[...L,cat,kind=="video"?"Videos":"Photos"].join("/"),name:fname(kind,L)};
+let m="Saved in the gallery. Use Download or ZIP to keep it.";
+if(fdir){if(await perm(true)){try{await put(r);r.folder=1;m="Saved to "+fdir.name+"/"+r.path}catch(e){m="Folder save failed ("+e.name+"). Kept in the gallery."}}else m="Folder access not allowed. Kept in the gallery."}
+try{await tx("media","readwrite",o=>o.add(r))}catch(e){m="Couldn't store in the gallery ("+e.name+")"}toast(m);discard();gal()}
+
+// gallery
+let gf={kind:"all",country:"",city:"",place:"",cat:""},gr=[],gu=[];
+const lc=r=>r.loc.city||r.loc.town||r.loc.village||"",gl={country:r=>r.loc.country,city:lc,place:r=>r.loc.place,cat:r=>r.cat};
+async function gal(){try{gr=((await tx("media","readonly",o=>o.getAll()))||[]).sort((a,b)=>b.ts-a.ts)}catch(e){gr=[]}
+const sel=(k,l)=>`<label class="dd"><span>${l}</span><select data-gf="${k}" aria-label="${l}"><option value="">All</option>${[...new Set(gr.map(gl[k]).filter(Boolean))].sort().map(x=>`<option ${x==gf[k]?"selected":""}>${E(x)}</option>`).join("")}</select></label>`;
+$("gtools").innerHTML=sel("country","Country")+sel("city","City / town")+sel("place","Place")+sel("cat","Category")+`<div class="chips" style="margin:0;width:100%">${[["all","All"],["photo","Photos"],["video","Videos"]].map(([k,l])=>`<button type="button" data-gk="${k}" class="${gf.kind==k?"on":""}">${l}</button>`).join("")}</div>`;
+shown=gr.filter(r=>(gf.kind=="all"||r.kind==gf.kind)&&["country","city","place","cat"].every(k=>!gf[k]||gl[k](r)==gf[k]));
+gu.forEach(u=>URL.revokeObjectURL(u));gu=[];
+$("gg").innerHTML=shown.length?shown.map(r=>{const u=URL.createObjectURL(r.blob);gu.push(u);return`<div class="gi"><button class="th" type="button" data-o="${r.id}" aria-label="Open">${r.kind=="photo"?`<img src="${u}" alt="" loading="lazy">`:`<video src="${u}#t=0.1" preload="metadata" muted playsinline></video><i class="vb">Video</i>`}</button><div class="gm"><b>${E(new Date(r.ts).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short"}))}</b><div class="meta">${E([lc(r),r.loc.place,r.cat].filter(Boolean).join(" · "))}</div><div class="row"><button class="btn" type="button" data-d="${r.id}">Download</button><button class="btn" type="button" data-x="${r.id}">Delete</button></div></div></div>`}).join(""):`<p class="meta">Nothing here yet. Saved photos and videos appear here.</p>`}
+function dl1(blob,name){const u=URL.createObjectURL(blob),l=document.createElement("a");l.href=u;l.download=name;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),3000)}
+function openR(r){const u=URL.createObjectURL(r.blob),o=document.createElement("div");o.className="ov lb";o.innerHTML=`<div>${r.kind=="photo"?`<img src="${u}" alt="">`:`<video src="${u}" controls autoplay playsinline></video>`}<p class="meta">${E(new Date(r.ts).toLocaleString())}<br>${E(r.path)}</p><div class="row"><button class="btn p" data-d="${r.id}">Download</button><button class="btn" data-c="1">Close</button></div></div>`;o.onclick=e=>{if(e.target==o||e.target.dataset.c){URL.revokeObjectURL(u);o.remove()}};document.body.appendChild(o)}
+async function delR(r){if(!confirm("Delete this file from the gallery"+(r.folder?" and from your folder":"")+"?"))return;if(r.folder&&await perm(false)){try{let d=fdir;for(const s of r.path.split("/"))d=await sub(d,s);await d.removeEntry(r.name)}catch(e){}}await tx("media","readwrite",o=>o.delete(r.id));toast("Deleted");gal()}
+// ZIP (stored, no compression) keeps the folder structure when direct folder access isn't available
+const CT=(()=>{const t=[];for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+const crc=u=>{let c=-1;for(let i=0;i<u.length;i++)c=CT[(c^u[i])&255]^(c>>>8);return(c^-1)>>>0};
+async function zip(list){const en=new TextEncoder(),parts=[],cd=[];let off=0,cs=0;
+for(const r of list){const nm=en.encode(r.path+"/"+r.name),d=new Uint8Array(await r.blob.arrayBuffer()),c=crc(d),t=new Date(r.ts),tm=(t.getHours()<<11)|(t.getMinutes()<<5)|(t.getSeconds()>>1),dd=((t.getFullYear()-1980)<<9)|((t.getMonth()+1)<<5)|t.getDate();
+const h=new DataView(new ArrayBuffer(30));h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x800,true);h.setUint16(10,tm,true);h.setUint16(12,dd,true);h.setUint32(14,c,true);h.setUint32(18,d.length,true);h.setUint32(22,d.length,true);h.setUint16(26,nm.length,true);parts.push(h.buffer,nm,d);
+const e=new DataView(new ArrayBuffer(46));e.setUint32(0,0x02014b50,true);e.setUint16(4,20,true);e.setUint16(6,20,true);e.setUint16(8,0x800,true);e.setUint16(12,tm,true);e.setUint16(14,dd,true);e.setUint32(16,c,true);e.setUint32(20,d.length,true);e.setUint32(24,d.length,true);e.setUint16(28,nm.length,true);e.setUint32(42,off,true);cd.push(e.buffer,nm);cs+=46+nm.length;off+=30+nm.length+d.length}
+const z=new DataView(new ArrayBuffer(22));z.setUint32(0,0x06054b50,true);z.setUint16(8,list.length,true);z.setUint16(10,list.length,true);z.setUint32(12,cs,true);z.setUint32(16,off,true);return new Blob([...parts,...cd,z.buffer],{type:"application/zip"})}
+
+let gpsPos=null;
+const ext=(k)=>{const t=cur.blob.type;return t.includes("png")?"png":t.includes("heic")?"heic":t.includes("mp4")?"mp4":t.includes("quicktime")?"mov":t.includes("webm")?"webm":k=="photo"?"jpg":"mp4"};
+function gps(){return new Promise(ok=>{if(!$("cgps").checked||!navigator.geolocation)return ok();navigator.geolocation.getCurrentPosition(p=>{const a=p.coords.latitude,b=p.coords.longitude;let best,bd=1e9;for(const[n,c]of Object.entries({...CO,Khajjiar:[32.55,76.06]})){const d=Math.hypot((c[0]-a)*111,(c[1]-b)*111*Math.cos(a*Math.PI/180));if(d<bd){bd=d;best=n}}gpsPos={lat:+a.toFixed(5),lon:+b.toFixed(5)};if(bd<45){const n={"Bir Billing":"Bir",Tirthan:"Tirthan Valley"}[best]||best;stopPick(n);$("cstop").value=n;toast("GPS: near "+n)}else toast("GPS read, but you are not near a trip stop. Pick the place yourself.");ok()},()=>{toast("GPS blocked or unavailable. Pick the place yourself.");ok()},{enableHighAccuracy:true,timeout:10000,maximumAge:60000})})}
+const GUESS=[[/temple|mandir|gurudwara|church|monastery|sahib/i,"Temples and monuments"],[/waterfall/i,"Waterfalls"],[/river|lake/i,"Rivers"],[/fort|bagh|heritage|stadium/i,"Historical places"],[/market|bazaar|mall road|chowk|street/i,"Streets and markets"],[/hotel|stay|homestay|inn|resort|retreat/i,"Hotels and stays"],[/peak|valley|pass|snow|trek|ropeway|tunnel/i,"Mountains"],[/forest|sanctuary|meadow|garden|trail|park|vihar/i,"Forests"]];
+function guessCat(){const c=$("ccat");if(c.value&&!c.dataset.auto)return;const t=fv("place")+" "+fv("stay"),g=GUESS.find(x=>x[0].test(t));if(g){c.value=g[1];c.dataset.auto=1;saveLoc();paths()}}
+async function nativePick(e,kind){const f=e.target.files[0];e.target.value="";if(!f)return;await gps();review(kind,f)}
+function camStop(){}
+function camInit(){
+$("camera").innerHTML=`<h2>Camera</h2><p class="sub">Opens your phone's own camera app. Every photo and video is filed by place and category.</p>
+<div class="cam2"><div class="card"><h3>1. Where is this?</h3><div class="meta">Pick a trip stop or type any name. Each list narrows as you choose.</div><div class="fl" style="margin-top:12px"><div class="full"><label class="gpsl"><input type="checkbox" id="cgps"><span>Fill the trip stop from my GPS after each capture. Optional, off by default. Your position stays on this device.</span></label></div><div class="full"><label for="cstop">Trip stop</label><select id="cstop"><option value="">Custom</option>${STOPS.map(s=>`<option>${s}</option>`).join("")}</select></div>${F.map(([k,l])=>`<div><label for="cf-${k}">${l}</label><input type="search" id="cf-${k}" list="dl-${k}" autocomplete="off" placeholder="Search or type"><datalist id="dl-${k}"></datalist></div>`).join("")}<div class="full"><label for="ccat">Category</label><input type="search" id="ccat" list="dl-cat" autocomplete="off" placeholder="Search or type your own"><datalist id="dl-cat">${CAT.map(c=>`<option value="${c}">`).join("")}</datalist></div></div><div class="meta" style="margin-top:12px">Will be filed in: <b id="cpath"></b></div></div>
+<div><div class="card"><h3>2. Capture</h3><div class="meta">Opens the camera app. When you come back, check it and save.</div>
+<div class="capbtns" id="cb1"><button class="capbtn" id="nph" type="button">${ico(IC.cam)}Take photo</button><button class="capbtn v" id="nvd" type="button">${ico(IC.vid)}Record video</button></div>
+<input type="file" id="fph" accept="image/*" capture="environment" hidden><input type="file" id="fvd" accept="video/*" capture="environment" hidden>
+<div class="rvw2" id="rv" hidden></div>
+<div class="row" id="cb2" style="justify-content:center" hidden><button class="btn c" id="csave" type="button">Save</button><button class="btn p" id="cshare" type="button">Save to phone gallery</button><button class="btn" id="cretake" type="button">Discard</button></div></div>
+<div class="card" style="margin-top:16px"><h3>Save location</h3><div class="meta" id="cfs"></div><div class="row"><button class="btn p" id="cdir" type="button">Choose folder</button></div></div></div></div>
+<h3 style="margin-bottom:10px">Gallery</h3><div class="tools noprint" id="gtools"></div><div class="row noprint" style="margin:0 0 12px"><button class="btn" id="gzip" type="button">Download ZIP of shown</button></div><div class="gg" id="gg"></div>`;
+const V=ls.get("camloc",{});F.forEach(([k])=>setv(k,V[k]||""));$("ccat").value=V.cat||"";if(!fv("country"))setv("country","India");dls();paths();ui();fstat();gal();
+tx("kv","readonly",o=>o.get("dir")).then(h=>{fdir=h||null;fstat()}).catch(()=>fstat());
+const cm=$("camera");
+cm.addEventListener("input",e=>{const i=e.target.id||"";if(i=="ccat")e.target.dataset.auto="";if(i.startsWith("cf-")||i=="ccat"){dls();paths()}});
+cm.addEventListener("change",e=>{const i=e.target.id||"",d=e.target.dataset;if(i=="cstop")stopPick(e.target.value);else if(i.startsWith("cf-")||i=="ccat")autofill();if(d.gf){gf[d.gf]=e.target.value;gal()}});
+cm.addEventListener("focusin",e=>{if(e.target.list)dls()});
+$("nph").onclick=()=>$("fph").click();$("nvd").onclick=()=>$("fvd").click();$("fph").onchange=e=>nativePick(e,"photo");$("fvd").onchange=e=>nativePick(e,"video");$("cshare").onclick=()=>{const f=new File([cur.blob],fname(cur.kind,lp()),{type:cur.blob.type});if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f]}).catch(()=>{});else toast("This browser can't share files. Use Save, then Download.")};$("csave").onclick=saveCur;$("cretake").onclick=discard;
+$("cdir").onclick=async()=>{try{fdir=await showDirectoryPicker({mode:"readwrite"});tx("kv","readwrite",o=>o.put(fdir,"dir")).catch(()=>{});fstat();toast("Folder set: "+fdir.name)}catch(e){if(e.name!="AbortError")toast("Couldn't open folder ("+e.name+")")}};
+$("gzip").onclick=async()=>{if(!shown.length)return toast("Nothing to download");toast("Building ZIP…");dl1(await zip(shown),"Trip-media-"+new Date().toISOString().slice(0,10)+".zip")};
+document.addEventListener("click",e=>{const el=e.target.closest("[data-o],[data-d],[data-x],[data-gk]");if(!el)return;const d=el.dataset,r=gr.find(x=>x.id==(d.o||d.d||d.x));
+if(d.gk){gf.kind=d.gk;gal()}else if(d.o&&r)openR(r);else if(d.d&&r)dl1(r.blob,r.name);else if(d.x&&r)delR(r)});
+}
+
+// ===== Documents: Google Drive links (or local docs/ files), managed on #admin =====
+const HID=["https://drive.google.com/file/d/1p7iDoIKDpyDSdcsFEcvm79Zyhz13MR-y/view", "https://drive.google.com/file/d/1rOqgqcJpDdUvLKZvO4E2AGqaCWGo5gch/view", "https://drive.google.com/file/d/13ZW8LARdn5xqRjYzjuVE7F6_yXbqE6ca/view", "https://drive.google.com/file/d/1eIPPMp6-LP4POhXGnT03dqT6PjldjF-o/view", "https://drive.google.com/file/d/1vOz4qAC3bLstVWPFqUewWGWN0-Kdv5z5/view", "https://drive.google.com/file/d/1BxbgG-43117tzb8tCiBLLZZx1neeSUtE/view", "https://drive.google.com/file/d/1Lqa9C5RHJlNtxKU6Zam8QNrtKYZ6LRLz/view", "https://drive.google.com/file/d/16t-D7ShBSbnbnqRJOAiOvZFgXOV_I2hf/view", "https://drive.google.com/file/d/10bc1z9Tff0Od6LjJt2DoiiNGKTvlliP3/view", "https://drive.google.com/file/d/1-QuAGjc9VblStoaW7kJOX39ceMj-wAd5/view", "https://drive.google.com/file/d/1Rr1YzdRYcT6Vp6t6ujfQY8lttuiLzHxb/view", "https://drive.google.com/file/d/16_rbyzkWkOabKc58MRn8QWUVEnfjcbEk/view"];
+const DEF=[["Trains","Paschim Express 12925 · Start 4–5 Dec (Bandra → Ludhiana)","docs/train-paschim-express.pdf","https://drive.google.com/file/d/1_gerAxxM-a9odDKvm1mnJO9JQ6-0rC3A/view"],["Trains","Golden Temple Mail 12904 · Return 22 Dec (Amritsar → Bandra)","docs/train-golden-temple-mail.pdf","https://drive.google.com/file/d/1nYye_AdvbDU5oU9zSXRV7_GDyc3q3XEA/view"],...H.map((h,i)=>["Hotels",h[0]+" · "+h[1]+" ("+h[5]+")","docs/hotel-"+String(i+1).padStart(2,"0")+"-"+h[1].toLowerCase().replace(/[^a-z]+/g,"-")+".pdf",HID[i]||""]),["Other","Hotline Holidays Taxi Voucher · Priyanka Pal","docs/taxi-voucher.pdf","https://drive.google.com/file/d/1TgJy4iMkOEYmiakyFjzImJlkR3f-P83b/view"],["Other","Himachal Pradesh + Amritsar Itinerary · Priyanka","docs/itinerary.pdf","https://drive.google.com/file/d/1p0BImkBLYxM7tq6uxgDkPRzzJzngTzvQ/view"],["ID proofs","Ashish · Aadhaar card","docs/id-ashish-aadhaar.pdf","https://drive.google.com/file/d/17VvLnR3jpU6fpFfOtMKC-MtQp53LU7d0/view"],["ID proofs","Ashish · PAN card","docs/id-ashish-pan.pdf","https://drive.google.com/file/d/16RuVY9SPeBDno8nrW5nc8aRm0TvNv9Pd/view"],["ID proofs","Priyanka · Aadhaar card","docs/id-priyanka-aadhaar.pdf","https://drive.google.com/file/d/1k6MYLGxfBRoJOR6IeaKmgxfx_581M4kX/view"],["ID proofs","Priyanka · PAN card","docs/id-priyanka-pan.pdf","https://drive.google.com/file/d/1oq3Yp8_BFXOjktPB4dLIyY8NFQTdj6U9/view"],["ID proofs","Priyanka · Driving licence","docs/id-driving-licence.pdf","https://drive.google.com/file/d/1MjTgYbYr0qGO4P2gpuEjXbV6AGAHQao1/view"]];
+const FOLDER="https://drive.google.com/drive/folders/1ftDbrxlCOX0jMfj01kCA1wLv8pW0xnMO";
+let cfg={f:FOLDER,v:2,i:DEF.map(x=>x.slice())};const have={},draft=ls.get("docsdraft",null);
+function mig(c){if(!c||!c.i)return c;const old=["docs/id-aadhaar.pdf","docs/id-pan.pdf"];
+c.i=c.i.filter(d=>!((old.includes(d[2])||(!d[2]&&d[1]=="New document"))&&!d[3]));
+DEF.forEach(x=>{const m=c.i.find(d=>d[2]==x[2]);if(m){if(!m[3]&&x[3])m[3]=x[3]}else c.i.push(x.slice())});
+if(!(c.v>=2)){DEF.forEach(x=>{const m=c.i.find(d=>d[2]==x[2]);if(m&&x[3])m[3]=x[3];if(m&&x[2]=="docs/id-driving-licence.pdf")m[1]=x[1]});c.v=2;if(!c.f)c.f=FOLDER}
+const k=d=>DEF.findIndex(x=>x[2]==d[2]);
+c.i=c.i.map((d,n)=>[d,n]).sort((a,b)=>{const ka=k(a[0]),kb=k(b[0]);return(ka<0?1e3+a[1]:ka)-(kb<0?1e3+b[1]:kb)}).map(x=>x[0]);return c}
+if(draft)cfg=draft;cfg=mig(cfg);
+function refreshDocs(){docsPg();trainPg();home();stays()}
+fetch("docs.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.i&&!draft){cfg=mig(j);refreshDocs();if(!sess)adminPg()}}).catch(()=>{});
+const abs=f=>new URL(f,location.href).href;
+const gid=u=>{if(/\/folders\//.test(u))return"";const m=u.match(/\/d\/([\w-]{10,})/)||u.match(/[?&]id=([\w-]{10,})/);return m?m[1]:""};
+const vurl=d=>d[3]?(gid(d[3])?"https://drive.google.com/file/d/"+gid(d[3])+"/view":d[3]):d[2];
+const durl=d=>d[3]?(gid(d[3])?"https://drive.google.com/uc?export=download&id="+gid(d[3]):d[3]):d[2];
+const prevUrl=d=>d[3]&&gid(d[3])?"https://drive.google.com/file/d/"+gid(d[3])+"/preview":vurl(d);
+const surl=d=>d[3]?vurl(d):abs(d[2]);
+const dTxt=d=>d[1]+"\n"+surl(d);
+const store=()=>{ls.set("docsdraft",cfg)};
+let dcat="all";
+function docsPg(){const D=cfg.i,G0=[["Trains","Train tickets"],["Hotels","Hotel vouchers"],["Other","Vouchers and itinerary"],["ID proofs","ID proofs"]],G=G0.filter(g=>dcat=="all"||g[0]==dcat);
+$("docs").innerHTML=`<div class="dtop"><div><h2>Documents</h2><p class="sub" style="margin:0">Tickets, vouchers and ID proofs. View, download or share each one.</p></div><div class="row noprint" style="margin:0"><label class="dd"><span>Category</span><select id="dcat" aria-label="Document category"><option value="all">All documents</option>${G0.map(([k,l])=>`<option value="${k}" ${dcat==k?"selected":""}>${l}</option>`).join("")}</select></label></div></div>
+${G.map(([g,l])=>{const L=D.map((d,i)=>[d,i]).filter(x=>x[0][0]==g);return L.length?`<h3 class="sec">${l} <span class="meta">· ${L.length}</span></h3><div class="grid dg">${L.map(([d,i])=>`<div class="card dcard" id="dc${i}"><div class="dh"><span class="di">${ico(IC.doc)}</span><div><h3>${E(d[1])}</h3><div class="meta" id="ds${i}">${d[3]?"":"Checking…"}</div></div></div><div class="da noprint"><a class="btn p ib2" aria-label="View" title="View" data-view="${E(prevUrl(d))}" data-vt="${E(d[1])}" data-vd="${E(durl(d))}" data-vo="${E(vurl(d))}" target="_blank" rel="noopener" href="${E(vurl(d))}">${ico(IC.eye)}</a><span class="ibs"><button class="ib" type="button" data-dsh="${i}" aria-label="Share" title="Share">${ico(IC.share)}</button><a class="ib" target="_blank" rel="noopener" href="https://wa.me/?text=${q(dTxt(d))}" aria-label="WhatsApp" title="WhatsApp">${ico(IC.wa)}</a><a class="ib" href="mailto:?subject=${q(d[1])}&body=${q(dTxt(d))}" aria-label="Email" title="Email">${ico(IC.mail)}</a><button class="ib" type="button" data-copy="${E(surl(d))}" aria-label="Copy link" title="Copy link">${ico(IC.copy)}</button></span></div></div>`).join("")}</div>`:""}).join("")}
+<div class="noprint" style="margin-top:22px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><span class="meta"><a href="#admin">Admin login</a></span>${cfg.f?`<a class="btn" target="_blank" rel="noopener" href="${E(cfg.f)}">${ico(IC.doc)}Open Drive folder</a>`:""}</div>`;
+D.forEach((d,i)=>{if(!d[3])fetch(d[2],{method:"HEAD"}).then(r=>{have[i]=r.ok;const m=$("ds"+i);if(m){m.textContent=r.ok?"PDF ready":"No Drive link yet";$("dc"+i).classList.toggle("dmiss",!r.ok)}}).catch(()=>{const m=$("ds"+i);if(m)m.textContent="No Drive link yet"})})}
+async function shareDoc(i){const d=cfg.i[i];if(!d[3]){try{const b=await (await fetch(d[2])).blob(),f=new File([b],d[2].split("/").pop(),{type:"application/pdf"});if(navigator.canShare&&navigator.canShare({files:[f]}))return navigator.share({files:[f],title:d[1]})}catch(e){}}
+if(navigator.share)return navigator.share({title:d[1],text:d[1],url:surl(d)}).catch(()=>{});copy(surl(d))}
+async function allDocs(k){const L=cfg.i.filter((d,i)=>d[3]||have[i]!==false),t="Trip documents"+(cfg.f?"\nDrive folder: "+cfg.f:"")+"\n\n"+L.map(dTxt).join("\n\n");
+if(k=="wa")window.open("https://wa.me/?text="+q(t),"_blank");
+else if(k=="mail")location.href="mailto:?subject="+q("Trip documents")+"&body="+q(t);
+else if(k=="sys"){if(navigator.share)navigator.share({title:"Trip documents",text:t}).catch(()=>{});else copy(t)}
+else{if(cfg.f&&!L.length){window.open(cfg.f,"_blank");return}toast("Downloading "+L.length+" files. Allow multiple downloads if asked.");for(const d of L){const a=document.createElement("a");a.href=durl(d);if(d[3]){a.target="_blank";a.rel="noopener"}else a.download=d[2].split("/").pop();document.body.appendChild(a);a.click();a.remove();await new Promise(r=>setTimeout(r,900))}}}
+document.addEventListener("click",e=>{const el=e.target.closest("[data-dsh],[data-dall]");if(!el)return;if(el.dataset.dsh!==undefined)shareDoc(+el.dataset.dsh);else allDocs(el.dataset.dall)});
+// admin
+let sess=null,adT=0,redo=false,radm=null;fetch("admin.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.ct){radm=j;if(!sess)adminPg()}}).catch(()=>{});const later=()=>{store();clearTimeout(adT);adT=setTimeout(refreshDocs,500)};
+const te=new TextEncoder(),h2=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join(""),u8=h=>new Uint8Array(h.match(/../g).map(x=>parseInt(x,16)));
+const pkey=async(pw,salt)=>crypto.subtle.deriveKey({name:"PBKDF2",salt:u8(salt),iterations:600000,hash:"SHA-256"},await crypto.subtle.importKey("raw",te.encode(pw),"PBKDF2",false,["deriveKey"]),{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
+async function seal(pw,tok){const salt=h2(crypto.getRandomValues(new Uint8Array(16))),iv=crypto.getRandomValues(new Uint8Array(12));return{salt,iv:h2(iv),ct:h2(await crypto.subtle.encrypt({name:"AES-GCM",iv},await pkey(pw,salt),te.encode(tok)))}}
+async function unseal(a,pw){try{return new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:u8(a.iv)},await pkey(pw,a.salt),u8(a.ct)))}catch(e){return null}}
+const repoGuess=()=>{const h=location.hostname,p=location.pathname.split("/").filter(Boolean);if(!h.endsWith("github.io"))return"";const o=h.split(".")[0];return o+"/"+(p[0]&&!/\.html?$/.test(p[0])?p[0]:o+".github.io")};
+function arows(){$("arows").innerHTML=cfg.i.map((d,i)=>`<div class="card" style="margin-bottom:10px"><div class="meta">${d[0]}</div><div class="fl" style="margin-top:6px"><div class="full"><label>Title</label><input type="text" data-ai="${i}" data-ak="1" value="${E(d[1])}"></div><div class="full"><label>Google Drive file link</label><input type="url" data-ai="${i}" data-ak="3" value="${E(d[3])}" placeholder="https://drive.google.com/file/d/..."></div></div><div class="row"><a class="btn" target="_blank" rel="noopener" href="${E(vurl(d))}">Test link</a><button class="btn" type="button" data-arm="${i}">Delete</button></div></div>`).join("")||'<p class="meta">No documents yet.</p>'}
+function adminPg(){const a=ls.get("adm",null)||radm,el=$("admin");
+if(sess){el.innerHTML=`<h2>Admin</h2><p class="sub">Signed in as ${E(a?a.id:"")}. Edit, then press Publish so everyone sees it.</p>
+<div class="card"><h3>Drive folder link</h3><div class="fl" style="margin-top:8px"><div class="full"><input type="url" id="afold" value="${E(cfg.f)}" placeholder="https://drive.google.com/drive/folders/..."></div></div></div>
+<div class="card" style="margin-top:14px"><h3>Help bot AI</h3><div class="fl" style="margin-top:8px"><div class="full"><label for="aip">Free AI service</label><select id="aip">${Object.entries(PV).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join("")}</select></div><div class="full"><label for="aik">Free API key</label><input type="password" id="aik" autocomplete="off" placeholder="Paste key here"></div><div class="full"><label for="aim">Model (optional)</label><input type="text" id="aim" autocomplete="off"></div></div><div class="meta" style="margin-top:10px" id="aih"></div><div class="row"><a class="btn p" id="ail" target="_blank" rel="noopener" href="#">Get a free key</a></div><div class="meta">Saved with Publish and used by everyone on this site. Anyone who opens the site files can read the key, so use only a free key with no billing.</div></div>
+<h3 class="sec">Documents</h3><div id="arows"></div>
+<div class="row"><label class="dd"><span>Group</span><select id="agrp" aria-label="Group"><option>Trains</option><option>Hotels</option><option>Other</option><option>ID proofs</option></select></label><button class="btn" id="aadd" type="button">Add document</button></div>
+<div class="row" style="margin-top:20px"><button class="btn c" id="apub" type="button">Publish to website</button><button class="btn" id="ajs" type="button">Download docs.json</button><button class="btn" id="adisc" type="button">Discard changes</button><button class="btn" id="achg" type="button">Change login</button><button class="btn" id="aout" type="button">Log out</button></div>
+<p class="meta" style="margin-top:10px">Set the Drive folder and files to "Anyone with the link → Viewer". After Publish, the site updates in about a minute.</p>`;arows();aiUi();return}
+if(a&&!redo){el.innerHTML=`<h2>Admin login</h2><p class="sub">Sign in to manage the documents.</p><div class="card"><div class="fl"><div><label for="lid">Admin ID</label><input type="text" id="lid" autocomplete="username"></div><div><label for="lpw">Password</label><input type="password" id="lpw" autocomplete="current-password"></div></div><div class="row"><button class="btn p" id="lgo" type="button">Log in</button><button class="btn" id="lrst" type="button">Reset login on this device</button></div></div>`;return}
+el.innerHTML=`<h2>Admin setup</h2><p class="sub">Create your admin ID and password. Done once per device.</p>
+<div class="note">To publish, make a GitHub token: GitHub → Settings → Developer settings → Fine-grained tokens → Generate. Pick only this repository and set <b>Contents: Read and write</b>. Your password locks the token, and the locked copy is saved in your repo so you can log in from any device.</div>
+<div class="card"><div class="fl"><div><label for="sid">Admin ID</label><input type="text" id="sid" autocomplete="username"></div><div><label for="spw">Password (8+ characters, make it long)</label><input type="password" id="spw" autocomplete="new-password"></div><div class="full"><label for="srepo">GitHub repo (owner/name)</label><input type="text" id="srepo" value="${E(repoGuess())}" placeholder="yourname/trip"></div><div class="full"><label for="spath">Path of docs.json in the repo</label><input type="text" id="spath" value="docs.json"></div><div class="full"><label for="stok">GitHub token</label><input type="password" id="stok" placeholder="github_pat_..." autocomplete="off"></div></div><div class="row"><button class="btn p" id="ssave" type="button">Create admin login</button></div></div>`}
+async function gput(repo,tok,path,text,msg){const u="https://api.github.com/repos/"+repo+"/contents/"+path,hd={Authorization:"Bearer "+tok,Accept:"application/vnd.github+json"};try{let sha;const r=await fetch(u,{headers:hd});if(r.ok)sha=(await r.json()).sha;else if(r.status!=404)return"GitHub error "+r.status+(r.status==401?": token rejected":r.status==403?": token can't write here":"");
+const w=await fetch(u,{method:"PUT",headers:{...hd,"Content-Type":"application/json"},body:JSON.stringify({message:msg,content:btoa(unescape(encodeURIComponent(text))),sha})});return w.ok?"ok":"GitHub error "+w.status+(w.status==404?": check the repo name and the token's repository access":w.status==401?": token rejected":w.status==403?": token can't write here":"")}catch(e){return"Network problem. Try again."}}
+async function publish(){const m=await gput(sess.repo,sess.tok,sess.path,JSON.stringify(cfg,null,1),"Update documents");if(m=="ok"){ls.set("docsdraft",null);toast("Published. Live in about a minute.")}else toast(m)}
+document.addEventListener("input",e=>{const t=e.target,d=t.dataset;if(t.id=="afold"){cfg.f=t.value.trim();later()}else if(d&&d.ai!==undefined){cfg.i[+d.ai][+d.ak]=t.value.trim();later()}else if(t.id=="aip"){aiCfg().p=t.value;aiUi();later()}else if(t.id=="aik"){aiCfg().k[aiCfg().p]=t.value.trim();later()}else if(t.id=="aim"){aiCfg().m[aiCfg().p]=t.value.trim();later()}});
+document.addEventListener("click",async e=>{const t=e.target,d=t.dataset||{},id=t.id;
+if(d.arm!==undefined){if(confirm("Delete this document?")){cfg.i.splice(+d.arm,1);store();arows();refreshDocs()}}
+else if(id=="aadd"){cfg.i.push([$("agrp").value,"New document","",""]);store();arows();refreshDocs()}
+else if(id=="apub")publish();
+else if(id=="ajs")dl1(new Blob([JSON.stringify(cfg,null,1)],{type:"application/json"}),"docs.json");
+else if(id=="adisc"){if(confirm("Throw away unpublished changes?")){ls.set("docsdraft",null);location.reload()}}
+else if(id=="aout"){sess=null;redo=false;adminPg()}
+else if(id=="achg"){redo=true;adminPg()}
+else if(id=="lrst"){if(confirm("Forget the login on this device? You can still log in again with your ID and password.")){ls.set("adm",null);adminPg()}}
+else if(id=="lgo"){const a=ls.get("adm",null)||radm;if(!crypto.subtle)return toast("Needs a secure (https) page");const tok=a&&$("lid").value.trim()==a.id?await unseal(a,$("lpw").value):null;if(!tok)return toast("Wrong ID or password");ls.set("adm",a);sess={tok,repo:a.repo,path:a.path};adminPg()}
+else if(id=="ssave"){const i=$("sid").value.trim(),pw=$("spw").value,repo=$("srepo").value.trim(),path=$("spath").value.trim()||"docs.json",tok=$("stok").value.trim();if(!i||pw.length<8||!/^[\w.-]+\/[\w.-]+$/.test(repo)||!tok)return toast("Fill every field. Password needs 8+ characters.");if(!crypto.subtle)return toast("Needs a secure (https) page");
+toast("Checking token…");const rec={id:i,repo,path,...await seal(pw,tok)},m=await gput(repo,tok,path.replace(/[^/]*$/,"")+"admin.json",JSON.stringify(rec),"Set admin login");if(m!="ok")return toast(m);ls.set("adm",rec);radm=rec;redo=false;sess={tok,repo,path};adminPg();toast("Admin ready. Log in from any device with your ID and password.")}});
+// ===== Help bot: free online AI services =====
+const PV={
+pol:{n:"Pollinations",m:"openai",link:"https://enter.pollinations.ai",hint:"Tries without a key. If it fails, get a free key here (no card)."},
+gem:{n:"Google Gemini",m:"gemini-flash-latest",link:"https://aistudio.google.com/apikey",hint:"Free key, no card. Recommended."},
+groq:{n:"Groq",m:"llama-3.3-70b-versatile",link:"https://console.groq.com/keys",hint:"Free key, no card. Very fast."},
+or:{n:"OpenRouter (free models)",m:"meta-llama/llama-3.3-70b-instruct:free",link:"https://openrouter.ai/keys",hint:"Free key. Use a model name ending in :free."}};
+const CH=Object.assign({p:"pol",k:{},m:{}},ls.get("chatcfg",{}));
+let chatH=ls.get("chat",[]),busy=false;
+const QS=["The room has no view","There is no hot water","The room is not clean","Hotel is refusing check-in","What is my next stay?","How do I handle icy roads?"];
+const chatSave=()=>{ls.set("chat",chatH.slice(-24));ls.set("chatcfg",CH)};
+function sysPrompt(){const now=new Date().toLocaleString("en-IN",{dateStyle:"full",timeStyle:"short"});
+return "You are the help assistant inside a private trip page for Ashish and Priyanka, travelling in Himachal Pradesh and Amritsar from 5 to 22 Dec 2026. Be brief, practical and kind. Use only the trip data below for bookings; if unsure, say so and suggest contacting the travel agent. For hotel problems (no view, cleanliness, water, heater, wrong room) give 2 or 3 quick steps: speak to reception first, take photos, then message the travel agent. Tell them a ready-made message can be sent from the Stays page or with the button under your answer. In an emergency tell them to call 112 or the travel agent. December roads in Himachal can be icy or closed, so advise checking road status and using local drivers. Never invent prices, phone numbers or bookings.\nCurrent time: "+now+"\nStays:\n"+H.map(h=>"- "+h[5]+" to "+h[6]+": "+h[0]+", "+h[1]+" ("+h[2]+"; view: "+h[4]+")").join("\n")+"\nTrains:\n"+T.map(t=>"- "+t.n+" "+t.no+", "+t.route+", "+t.date+", "+t.cls+", seat "+t.seat).join("\n")+"\nTravel agent: Dinesh Veerani, Hotline Holidays LLP."}
+async function post(url,headers,body){const c=new AbortController(),t=setTimeout(()=>c.abort(),45000);try{const r=await fetch(url,{method:"POST",headers:Object.assign({"Content-Type":"application/json"},headers),body:JSON.stringify(body),signal:c.signal});const tx=await r.text();if(!r.ok)throw new Error("HTTP "+r.status+" "+tx.slice(0,140));try{return JSON.parse(tx)}catch(e){return{raw:tx}}}finally{clearTimeout(t)}}
+const oai=async(url,key,model,msgs)=>{const j=await post(url,key?{Authorization:"Bearer "+key}:{},{model,messages:msgs,temperature:.4,max_tokens:700});const c=j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content;if(c)return c;if(j.raw)return j.raw;throw new Error("Empty reply")};
+const aiCfg=()=>{const a=cfg.ai||(cfg.ai={});if(!PV[a.p])a.p=PV[CH.p]?CH.p:"pol";a.k=a.k||{};a.m=a.m||{};return a};
+function aiUi(){const a=aiCfg(),p=a.p,v=PV[p];if(!$("aip"))return;$("aip").value=p;$("aik").value=a.k[p]||"";$("aim").value=a.m[p]||"";$("aim").placeholder=v.m;$("ail").href=v.link;$("aih").textContent=v.hint}
+async function askLLM(hist){const A=aiCfg(),p=A.p,key=(A.k[p]||CH.k[p]||"").trim(),model=(A.m[p]||CH.m[p]||PV[p].m).trim(),sys=sysPrompt(),msgs=[{role:"system",content:sys},...hist.map(m=>({role:m.r=="u"?"user":"assistant",content:m.t}))];
+if(p=="gem"){if(!key)throw new Error("NOKEY");const j=await post("https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(model)+":generateContent?key="+encodeURIComponent(key),{},{systemInstruction:{parts:[{text:sys}]},contents:hist.map(m=>({role:m.r=="u"?"user":"model",parts:[{text:m.t}]})),generationConfig:{temperature:.4,maxOutputTokens:700}});const t=j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts;if(t&&t.length)return t.map(x=>x.text||"").join("");throw new Error("Empty reply")}
+if(p=="groq"){if(!key)throw new Error("NOKEY");return oai("https://api.groq.com/openai/v1/chat/completions",key,model,msgs)}
+if(p=="or"){if(!key)throw new Error("NOKEY");return oai("https://openrouter.ai/api/v1/chat/completions",key,model,msgs)}
+if(key)return oai("https://gen.pollinations.ai/v1/chat/completions",key,model,msgs);
+return oai("https://text.pollinations.ai/openai","",model,msgs)}
+const md=t=>E(t).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>").replace(/^\s*[-*] /gm,"• ").replace(/\n/g,"<br>");
+function drawMsgs(){const el=$("bmsgs");if(!el)return;const lb=chatH.map(m=>m.r).lastIndexOf("b");
+el.innerHTML=(chatH.length?"":`<div class="bb b">Hi! I am your trip helper. Ask about your stays or trains, or tell me about a problem such as "the room has no view" or "there is no hot water".</div>`)+chatH.map((m,i)=>{if(m.r=="u")return `<div class="bb u">${md(m.t)}</div>`;
+let uq="";for(let k=i-1;k>=0;k--)if(chatH[k].r=="u"){uq=chatH[k].t;break}
+const act=i==lb?`<div class="irow noprint"><a class="btn wa ia" target="_blank" rel="noopener" href="${waAgent(BASE+"\nI asked the trip helper: "+uq+"\nPlease help us.")}" aria-label="Send to travel agent" title="Send to travel agent">${ico(IC.wa)}</a><a class="btn ia" href="tel:${AG.tel}" aria-label="Call agent" title="Call agent">${ico(IC.call)}</a></div>`:"";
+return `<div class="bb b${m.e?" e":""}">${md(m.t)}${act}</div>`}).join("")+(busy?`<div class="bb b">Thinking…</div>`:"");el.scrollTop=el.scrollHeight}
+async function chatSend(t){t=(t||"").trim();if(!t||busy)return;chatH.push({r:"u",t});busy=true;chatSave();drawMsgs();
+try{const a=await askLLM(chatH.filter(m=>!m.e).slice(-12));chatH.push({r:"b",t:String(a).trim()})}
+catch(e){const v=PV[aiCfg().p],nk=e.message=="NOKEY";chatH.push({r:"b",e:1,t:(nk?v.n+" needs a free key. ":v.n+" did not answer ("+(e.name=="AbortError"?"timed out":e.message)+"). ")+"The admin can fix this under Admin, Help bot AI. You can also message the travel agent now."})}
+busy=false;chatSave();drawMsgs()}
+function chatToggle(o){const p=$("cbp"),b=$("cbb");if(!p)return;const open=o==null?p.hidden:o;p.hidden=!open;b.setAttribute("aria-expanded",open);b.classList.toggle("on",open);b.innerHTML=ico(open?IC.x:IC.chat);if(open){drawMsgs();const i=$("bi");if(i&&matchMedia("(hover:hover)").matches)i.focus()}}
+function chatInit(){const w=document.createElement("div");w.id="cbw";w.className="noprint";
+w.innerHTML=`<div class="cbp" id="cbp" hidden role="dialog" aria-label="Help bot"><div class="cbh"><div><b>Help bot</b><div class="meta">Stays, trains or a problem on the road</div></div><button class="btn ia" type="button" id="bcl" aria-label="Clear chat" title="Clear chat">${ico(IC.trash)}</button></div><div id="bmsgs" aria-live="polite"></div><div class="chips" id="bq">${QS.map((x,i)=>`<button type="button" data-bq="${i}">${x}</button>`).join("")}</div><form class="cin" id="bf"><input id="bi" type="text" placeholder="Type your question" autocomplete="off" aria-label="Your question"><button class="btn p ia" type="submit" aria-label="Send" title="Send">${ico(IC.send)}</button></form><div class="meta cbn">AI answers can be wrong. For urgent help call the travel agent.</div></div><button class="cbb" id="cbb" type="button" aria-label="Open help bot" aria-expanded="false">${ico(IC.chat)}</button>`;
+document.body.appendChild(w);drawMsgs();
+$("cbb").onclick=()=>chatToggle();
+$("bf").onsubmit=e=>{e.preventDefault();const v=$("bi").value;$("bi").value="";chatSend(v)};
+$("bq").onclick=e=>{const b=e.target.closest("[data-bq]");if(b)chatSend(QS[+b.dataset.bq])};
+$("bcl").onclick=()=>{chatH=[];chatSave();drawMsgs()};
+addEventListener("keydown",e=>{if(e.key=="Escape"&&!$("cbp").hidden)chatToggle(false)})}
+
+// ===== Open external link: ask which browser each time =====
+const UA=navigator.userAgent,AND=/Android/i.test(UA),IOS=/iPhone|iPad|iPod/i.test(UA)||(navigator.platform=="MacIntel"&&navigator.maxTouchPoints>1);
+const BRW=[["Chrome","com.android.chrome",u=>u.replace(/^https:/,"googlechromes:")],["Microsoft Edge","com.microsoft.emmx",u=>u.replace(/^https:\/\//,"microsoft-edge-https://")],["Firefox","org.mozilla.firefox",u=>"firefox://open-url?url="+q(u)],["Brave","com.brave.browser",u=>"brave://open-url?url="+q(u)],["Samsung Internet","com.sec.android.app.sbrowser",null]];
+const intentUrl=(u,pkg)=>{const x=new URL(u);return"intent://"+x.host+x.pathname+x.search+"#Intent;scheme=https;package="+pkg+";S.browser_fallback_url="+q(u)+";end"};
+function pickBrowser(url,title,cv,cl){const old=document.querySelector(".bov");if(old)old.remove();
+const o=document.createElement("div");o.className="bov";o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");
+const opts=[["This browser (new tab)",()=>window.open(url,"_blank","noopener")]];
+if(AND)BRW.forEach(b=>opts.push([b[0],()=>{location.href=intentUrl(url,b[1])}]));
+else if(IOS)BRW.filter(b=>b[2]).forEach(b=>opts.push([b[0],()=>{location.href=b[2](url)}]));
+opts.push(["Copy link",()=>copy(url)]);
+const h=document.createElement("div");h.className="bbox";
+h.innerHTML="<h3>Open with which browser?</h3><div class=\"meta\">"+E(title)+"</div><div class=\"meta\" style=\"word-break:break-all\">"+E(url)+"</div>"+(cv?"<div class=\"note\" style=\"margin:10px 0 0\">"+E(cl||"Number")+" "+E(cv)+" is copied. Paste it on the page.</div>":"")+(AND||IOS?"":"<div class=\"meta\">On a computer the site cannot pick another browser. Copy the link and paste it into the one you want.</div>");
+const l=document.createElement("div");l.className="blist";
+opts.forEach(([n,f])=>{const b=document.createElement("button");b.type="button";b.className="btn"+(n.startsWith("This")?" p":"");b.textContent=n;b.onclick=()=>{o.remove();f()};l.appendChild(b)});
+const c=document.createElement("button");c.type="button";c.className="btn";c.textContent="Cancel";c.onclick=()=>o.remove();l.appendChild(c);
+h.appendChild(l);o.appendChild(h);o.addEventListener("click",e=>{if(e.target==o)o.remove()});document.body.appendChild(o);const f=h.querySelector("button");if(f)f.focus()}
+addEventListener("keydown",e=>{if(e.key=="Escape"){const o=document.querySelector(".bov");if(o)o.remove()}});
+document.addEventListener("click",e=>{const el=e.target.closest("[data-ext]");if(!el)return;e.preventDefault();const p=el.dataset.cv;if(p){try{navigator.clipboard.writeText(p).catch(()=>{})}catch(x){}}pickBrowser(el.dataset.ext,el.dataset.extT||"",p,el.dataset.cl)});
+
+// ===== View a document on the same page =====
+function closeViewer(fromPop){const o=document.querySelector(".vov");if(!o)return;removeEventListener("keydown",o._esc);o.remove();document.body.style.overflow="";if(!fromPop&&history.state&&history.state.vw)history.back()}
+function openViewer(src,title,dl,open){const old=document.querySelector(".vov");if(old)old.remove();
+const o=document.createElement("div");o.className="vov";o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");
+o.innerHTML="<div class=\"vbar\"><span class=\"vt\">"+E(title||"Document")+"</span><span class=\"vact\"><a class=\"ib2 btn\" href=\""+E(dl)+"\" target=\"_blank\" rel=\"noopener\" aria-label=\"Download\" title=\"Download\">"+ico(IC.save)+"</a><a class=\"ib2 btn\" href=\""+E(open)+"\" target=\"_blank\" rel=\"noopener\" aria-label=\"Open in new tab\" title=\"Open in new tab\">"+ico('<path d=\"M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5\"/>')+"</a><button class=\"ib2 btn p\" type=\"button\" id=\"vcl\" aria-label=\"Close\" title=\"Close\">"+ico('<path d=\"M6 6l12 12M18 6L6 18\"/>')+"</button></span></div><iframe title=\""+E(title||"Document")+"\" src=\""+E(src)+"\" allow=\"autoplay\"></iframe>";
+document.body.appendChild(o);document.body.style.overflow="hidden";
+try{history.pushState({vw:1},"")}catch(x){}
+o.querySelector("#vcl").onclick=()=>closeViewer();o.querySelector("#vcl").focus();
+o._esc=e=>{if(e.key=="Escape")closeViewer()};addEventListener("keydown",o._esc)}
+addEventListener("popstate",()=>closeViewer(true));
+document.addEventListener("click",e=>{const el=e.target.closest("[data-view]");if(!el||e.ctrlKey||e.metaKey||e.shiftKey||e.button)return;e.preventDefault();openViewer(el.dataset.view,el.dataset.vt,el.dataset.vd,el.dataset.vo)});
+
+// ===== scroll up / down buttons =====
+const fu=$("fup"),fd=$("fdn");fu.innerHTML=ico('<path d="M12 19V5M6 11l6-6 6 6"/>');fd.innerHTML=ico('<path d="M12 5v14M6 13l6 6 6-6"/>');
+function fabUpd(){const y=scrollY,m=document.documentElement.scrollHeight-innerHeight;fu.classList.toggle("off",y<160);fd.classList.toggle("off",m<160||m-y<160)}
+addEventListener("scroll",fabUpd,{passive:true});addEventListener("resize",fabUpd);
+fu.onclick=()=>scrollTo({top:0,behavior:"smooth"});fd.onclick=()=>scrollTo({top:document.documentElement.scrollHeight,behavior:"smooth"});
+try{new ResizeObserver(fabUpd).observe(document.body)}catch(e){}
+addEventListener("hashchange",route);all();docsPg();adminPg();camInit();chatInit();route();
+</script>
+</body>
+</html>
