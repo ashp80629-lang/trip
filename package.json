@@ -1,0 +1,15 @@
+{
+  "name": "trip",
+  "version": "1.0.0",
+  "description": "Trip details application",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'Static site - no build required'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/analytics": "^1.3.1"
+  }
+}
